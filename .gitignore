@@ -1,14 +1,53 @@
-# History files
+# mape_municipios — este repositório guarda código, documentação e os
+# arquivos finais de cada dimensão/painel. Dados brutos baixados e os
+# formatos pesados do painel final ficam só no Drive compartilhado (ver
+# 5 Pacote/NOTA_DECISAO_FONTE_DADOS.md sobre onde o pacote vai buscar os
+# dados publicados).
+
+# Residuos de sessao R / RStudio
 .Rhistory
 .Rapp.history
-
-# Session Data files
+.Ruserdata
+.Rproj.user/
+*.Rproj.user/
 .RData
 .RDataTmp
+~$*
 
-# User-specific files
-.Ruserdata
+# Logs de execução (gerados ao rodar os código.R, não são deliverable)
+_log_*.txt
 
+# Saída solta de plotagem sem arquivo de destino explícito
+/Rplots.pdf
+
+# Documento interno — não vai para o GitHub, fica só no Drive
+/Banco de dados Informações Municipais v1.docx
+
+# Caches, dados brutos e intermediários pesados dentro de cada dimensão —
+# o padrão abaixo cobre as subpastas de origem bruta mais comuns no
+# projeto (brutos/, cache_*, 0_dados, raw, *_bruta.zip etc.). Os arquivos
+# finais de cada dimensão (ex. saude_brasileira.xlsx) são adicionados
+# explicitamente, não dependem deste .gitignore.
+**/0_dados/
+**/1_script/
+**/bruto/
+**/brutos/
+**/*_bruta.zip
+**/*_raw/
+**/cache_sim_microdatasus/
+**/Disque 100/
+**/MUNIC/
+**/*.Rhistory
+
+# .dta fica de fora (4GB, não necessário); RData/csv/parquet vão via
+# Git LFS — ver .gitattributes.
+4 Base Final/mape_municipios.dta
+
+# Intermediário redundante da Etapa 3 (mesmo conteúdo acaba em
+# 4 Base Final/mape_municipios.parquet; só o crosswalk de dimensões fica)
+3 Junção e Transformação/painel_mape_municipios.RData
+
+# --- Modelo padrão de .gitignore para pacotes R (já estava no repositório) ---
 # Example code in package build process
 *-Ex.R
 
@@ -17,9 +56,6 @@
 
 # Output files from R CMD check
 /*.Rcheck/
-
-# RStudio files
-.Rproj.user/
 
 # produced vignettes
 vignettes/*.html

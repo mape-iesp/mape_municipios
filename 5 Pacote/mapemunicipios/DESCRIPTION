@@ -1,0 +1,33 @@
+Package: mapemunicipios
+Type: Package
+Title: Acesso e Analise do Banco de Dados mape_municipios
+Version: 0.0.0.9000
+Authors@R: person("Bruno", "Marques Schaefer", role = c("aut", "cre"),
+    email = "email@exemplo.com")
+Description: Importa, documenta e transforma o mape_municipios, banco de dados
+    em painel (municipio x ano) sobre os municipios brasileiros. Oferece funcoes
+    para explorar o dicionario, deflacionar valores monetarios, calcular taxas,
+    defasagens e variacoes, comparar municipios dentro de agrupamentos
+    territoriais, construir tipologias e indices, checar a qualidade dos dados e
+    exportar com rotulos.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: pt-BR
+Depends: R (>= 4.1.0)
+Imports:
+    dplyr (>= 1.1.0),
+    rlang,
+    stats,
+    stringi,
+    tools,
+    utils
+Suggests:
+    arrow,
+    deflateBR,
+    ggplot2,
+    haven,
+    openxlsx,
+    readxl,
+    testthat (>= 3.0.0)
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1

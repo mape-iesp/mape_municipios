@@ -1,0 +1,5 @@
+1[[:space:]]Bases[[:space:]]Individuais/6[[:space:]]Economia/economia_brasileira.xlsx filter=lfs diff=lfs merge=lfs -text
+1[[:space:]]Bases[[:space:]]Individuais/10[[:space:]]Finanças/financas_brasileiras.xlsx filter=lfs diff=lfs merge=lfs -text
+4[[:space:]]Base[[:space:]]Final/mape_municipios.parquet filter=lfs diff=lfs merge=lfs -text
+4[[:space:]]Base[[:space:]]Final/mape_municipios.RData filter=lfs diff=lfs merge=lfs -text
+4[[:space:]]Base[[:space:]]Final/mape_municipios.csv filter=lfs diff=lfs merge=lfs -text

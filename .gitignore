@@ -17,6 +17,9 @@
 # Logs de execução (gerados ao rodar os código.R, não são deliverable)
 _log_*.txt
 
+# Saída das análises exploratórias (gerada ao rodar o script, não é deliverable)
+6 Análises Exploratórias/saida/
+
 # Saída solta de plotagem sem arquivo de destino explícito
 /Rplots.pdf
 

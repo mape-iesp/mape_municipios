@@ -1,6 +1,6 @@
 # mape_municipios
 
-**mape_municipios** é um banco de dados em painel (município × ano) sobre os municípios brasileiros, construído pelo [IESP-UERJ](https://www.iesp.uerj.br/). Ele consolida informações de fontes oficiais e acadêmicas — órgãos governamentais (IBGE, TSE, INEP, Ministério da Saúde, CGU, entre outros), organizações privadas e bases produzidas para artigos científicos — num formato padronizado e pronto para análise, cobrindo:
+**mape_municipios** é um banco de dados em painel (município × ano) sobre os municípios brasileiros, construído pelo [MAPE](https://mape.org.br/), do IESP-UERJ. Ele consolida informações de fontes oficiais e acadêmicas — órgãos governamentais (IBGE, TSE, INEP, Ministério da Saúde, CGU, entre outros), organizações privadas e bases produzidas para artigos científicos — num formato padronizado e pronto para análise, cobrindo:
 
 - **17 dimensões** de política pública: Identificação, População, Assistência Social e Direitos Humanos, Corrupção e Transparência, Dados Históricos, Economia, Educação, Eleições e Partidos, Energia e Internet, Finanças, Habitação e Zoneamento, Meio-Ambiente, Recursos Humanos, Saúde, Segurança, Sociedade e Participação, e Mobilidade e Transportes;
 - **2.634 variáveis** no painel final consolidado;

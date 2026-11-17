@@ -58,19 +58,24 @@ colunas inteiras na memória.
   `.apply_filters()` em `import.R` (a lógica de junção entre dimensões fica
   quase toda desnecessária, já que o painel já vem junto).
 
-## 3. O `dicionario.xlsx` plano também precisa ser criado
+## 3. `dicionario.xlsx` — feito (16/11/2026)
 
-Independente da opção A/B, falta um passo que nenhum script hoje faz:
-combinar as 17 abas do METADADOS (empilhadas, com uma coluna `Dimensão`
-já presente em cada aba) + o `dimensao_slug` de `dicionario_dimensoes.csv`
-(join por nome da variável) num único `dicionario.xlsx` — é esse arquivo
-plano, não o METADADOS.xlsx como está hoje, que `import_mape_dictionary()`
-lê.
+`4 Base Final/dicionario.xlsx` já existe: empilha as 17 abas de dimensão do
+METADADOS (2.709 linhas, 2.593 variáveis únicas — a diferença são colunas
+compartilhadas entre dimensões, ex. `sigla_uf`, `id_municipio_nome`) e junta
+o `dimensao_slug` de `dicionario_dimensoes.csv` por nome de variável;
+`id_municipio`/`ano` recebem `identificacao`/`populacao` direto, já que não
+entram nesse crosswalk. Sem as colunas `Responsável`/`Validação` (nomes de
+pessoas, por pedido — ficam só no METADADOS.xlsx, que não é distribuído com
+o pacote).
+
+Gerado por `4 Base Final/gerar_dicionario.R` — rodar de novo sempre que o
+METADADOS ou "3 Junção e Transformação" (o crosswalk `dicionario_dimensoes
+.csv`) mudar.
 
 ## 4. Recomendação
 
-Opção B, mais o passo do item 3. Nenhuma das duas foi implementada aqui —
-fica para quando o formato de distribuição dos dados (`mape_source()`,
-ainda com placeholder `github.com/ORG/...`) for decidido, já que as duas
-decisões são relacionadas (onde o(s) arquivo(s) vão morar e como o pacote
-os lê são a mesma conversa).
+Opção B (pacote ler direto do `mape_municipios.parquet` único) ainda não
+implementada — fica para quando o formato de distribuição dos dados
+(`mape_source()`, ainda com placeholder `github.com/ORG/...`) for decidido.
+O `dicionario.xlsx` do item 3 já está pronto para essa opção (ou para a A).

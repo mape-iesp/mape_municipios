@@ -79,11 +79,11 @@ vignettes/*.pdf
 .Renviron
 .env
 
-# pkgdown site
-docs/
-
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# config local de preview deste repo (caminho específico da máquina)
+/.claude/

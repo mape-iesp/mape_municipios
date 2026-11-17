@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorador mape_municipios</title>
+<meta name="description" content="Explorador interativo do banco de dados em painel mape_municipios (MAPE/IESP-UERJ): dicionário de variáveis, mapas, séries temporais e relações entre indicadores.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  :root {
+    --bg: #faf9f7; --panel: #ffffff; --border: #e3ddd3; --fg: #2b2824; --fg-muted: #746e64;
+    --accent: #c15f3c; --accent-2: #4a7c7c; --accent-3: #8a6fb3; --grid: #ece7de; --axis: #b7afa2;
+    --font-serif: Georgia, 'Times New Roman', serif; --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1a17; --panel: #262320; --border: #3a3530; --fg: #ece7de; --fg-muted: #a39a8c;
+      --grid: #332f2a; --axis: #5c554c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a17; --panel: #262320; --border: #3a3530; --fg: #ece7de; --fg-muted: #a39a8c;
+    --grid: #332f2a; --axis: #5c554c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-sans); font-size: 15px; line-height: 1.45; }
+  a { color: var(--accent); }
+  .wrap { padding: 28px 16px 56px; display: flex; flex-direction: column; gap: 22px; max-width: 1100px; margin: 0 auto; }
+  .intro h1 { font-family: var(--font-serif); font-weight: 400; font-size: 1.9rem; margin: 0 0 6px; }
+  .intro p { color: var(--fg-muted); font-size: 0.95rem; margin: 0; max-width: 68ch; }
+  .intro .back { font-size: 0.85rem; margin-top: 8px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .tile { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .tile .num { font-family: var(--font-serif); font-weight: 400; font-size: 1.7rem; font-variant-numeric: tabular-nums; }
+  .tile .lbl { color: var(--fg-muted); font-size: 0.78rem; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px 18px; }
+  .card h2 { font-size: 1.15rem; font-weight: 600; margin: 0 0 4px; }
+  .card .sub { color: var(--fg-muted); font-size: 0.82rem; margin: 0 0 12px; }
+  .card .sub code { font-size: 0.78rem; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+  .controls label { font-size: 0.78rem; color: var(--fg-muted); margin-right: -2px; }
+  .select, select, input.inp {
+    font: inherit; font-size: 0.86rem; padding: 6px 9px; border: 1px solid var(--border); border-radius: 7px;
+    background: var(--bg); color: var(--fg); min-width: 150px; flex: 1 1 150px;
+  }
+  input.inp { min-width: 200px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.78rem; color: var(--fg-muted); margin-top: 6px; }
+  .legend .sw { display: inline-block; width: 14px; height: 2px; margin-right: 5px; vertical-align: middle; border-radius: 1px; }
+  .legend .dot { display: inline-block; width: 9px; height: 9px; margin-right: 5px; vertical-align: middle; border-radius: 50%; }
+  .dim-bar { display: flex; align-items: center; gap: 8px; margin: 4px 0; cursor: pointer; }
+  .dim-bar .track { flex: 1 1 auto; min-width: 0; height: 17px; background: var(--grid); border-radius: 3px; position: relative; overflow: hidden; }
+  .dim-bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 3px; }
+  .dim-bar .name { width: 170px; flex: 0 0 170px; font-size: 0.78rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dim-bar .val { width: 36px; flex: 0 0 36px; font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+  .dim-bar.is-active .track { outline: 2px solid var(--accent); outline-offset: 1px; }
+  table.dic { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  table.dic th, table.dic td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.dic th { color: var(--fg-muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
+  table.dic td.var { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; font-size: 0.75rem; }
+  .table-wrap { max-height: 420px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+  .table-note { color: var(--fg-muted); font-size: 0.78rem; margin-top: 6px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+  .tooltip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,.12); color: var(--fg); font-size: 0.78rem; padding: 6px 9px; border-radius: 6px; opacity: 0; transition: opacity .1s; z-index: 5; }
+  .chart-box { position: relative; }
+  .stat-line { font-size: 0.8rem; color: var(--fg-muted); margin-top: 6px; }
+  details.footnote { margin-top: 2px; }
+  details.footnote summary { cursor: pointer; font-size: 0.82rem; color: var(--fg-muted); }
+  details.footnote div { font-size: 0.8rem; color: var(--fg-muted); margin-top: 8px; }
+  footer.page { text-align: center; color: var(--fg-muted); font-size: 0.78rem; padding: 10px 0 30px; }
+  svg text { font-family: var(--font-sans); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="intro">
+    <h1>Explorador mape_municipios</h1>
+    <p id="subtitulo">—</p>
+    <p class="back"><a href="https://github.com/mape-iesp/mape_municipios">← mape-iesp/mape_municipios no GitHub</a></p>
+  </div>
+
+  <div class="tiles" aria-label="Resumo do banco">
+    <div class="tile"><div class="num" id="t_dimensoes">—</div><div class="lbl">dimensões</div></div>
+    <div class="tile"><div class="num" id="t_variaveis">—</div><div class="lbl">variáveis</div></div>
+    <div class="tile"><div class="num" id="t_observacoes">—</div><div class="lbl">observações município-ano</div></div>
+    <div class="tile"><div class="num" id="t_periodo">—</div><div class="lbl">período</div></div>
+    <div class="tile"><div class="num" id="t_municipios">—</div><div class="lbl">municípios</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Dimensões</h2>
+    <p class="sub">Número de variáveis documentadas por dimensão (dicionário de metadados). Clique numa barra para filtrar o dicionário abaixo.</p>
+    <div id="dimensoes_chart" aria-label="Variáveis por dimensão">—</div>
+  </div>
+
+  <div class="card">
+    <h2>Dicionário de variáveis</h2>
+    <p class="sub">Busca no nome e na descrição — o mesmo catálogo que as funções <code>search_mape()</code>, <code>list_mape_variables()</code> e <code>info_mape()</code> do pacote <code>mapemunicipios</code> vão consultar.</p>
+    <div class="controls">
+      <input class="inp" type="search" id="busca-dic" placeholder="Buscar variável ou descrição…" aria-label="Buscar variável">
+      <label for="filtro-dim">Dimensão</label>
+      <select id="filtro-dim" aria-label="Filtrar por dimensão"></select>
+    </div>
+    <div class="table-wrap">
+      <table class="dic">
+        <thead><tr><th>Variável</th><th>Dimensão</th><th>Descrição</th><th>Natureza</th><th>Escopo temporal</th></tr></thead>
+        <tbody id="dic_rows"></tbody>
+      </table>
+    </div>
+    <p class="table-note" id="dic_nota">—</p>
+  </div>
+
+  <div class="card">
+    <h2>Mapa</h2>
+    <p class="sub">Média do indicador por recorte geográfico escolhido.</p>
+    <div class="controls">
+      <label for="var-mapa">Indicador</label>
+      <select id="var-mapa" aria-label="Indicador (mapa)"></select>
+      <label for="nivel-mapa">Recorte</label>
+      <select id="nivel-mapa" aria-label="Nível geográfico do mapa">
+        <option value="estado">Estado</option>
+        <option value="meso">Mesorregião</option>
+        <option value="micro">Microrregião</option>
+        <option value="municipio">Município</option>
+      </select>
+      <span id="ano-mapa-wrap">
+        <label for="ano-mapa">Ano</label>
+        <select id="ano-mapa" aria-label="Ano (mapa)"></select>
+      </span>
+    </div>
+    <div class="chart-box">
+      <div id="mapa_chart" aria-label="Mapa">—</div>
+      <div class="tooltip" id="tt-mapa"></div>
+    </div>
+    <p class="stat-line" id="mapa_nota">—</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>Exploração ao longo do tempo</h2>
+      <p class="sub">Média por ano — no espírito de <code>calculate_growth()</code> / <code>calculate_moving_average()</code>. Compare o Brasil com um estado e/ou um município.</p>
+      <div class="controls">
+        <label for="var-tempo">Indicador</label>
+        <select id="var-tempo" aria-label="Indicador (tempo)"></select>
+      </div>
+      <div class="controls">
+        <label for="uf-tempo">+ Estado</label>
+        <select id="uf-tempo" aria-label="Comparar com um estado"></select>
+        <label for="muni-tempo">+ Município</label>
+        <input class="inp" id="muni-tempo" list="muni-datalist" placeholder="Buscar município…" aria-label="Comparar com um município">
+        <button type="button" id="muni-tempo-limpar" title="Remover município">×</button>
+      </div>
+      <div class="chart-box">
+        <div id="tempo_chart" aria-label="Série temporal">—</div>
+        <div class="tooltip" id="tt-tempo"></div>
+      </div>
+      <div class="legend" id="tempo_legend"></div>
+      <p class="stat-line" id="tempo_nota">—</p>
+    </div>
+
+    <div class="card">
+      <h2>Relações entre indicadores</h2>
+      <p class="sub">No espírito de <code>typology_mape()</code> / <code>compare_group()</code>. O ponto do Brasil é sempre mostrado; destaque também um estado e/ou um município.</p>
+      <div class="controls">
+        <label for="var-x">Eixo X</label>
+        <select id="var-x" aria-label="Variável do eixo X"></select>
+        <label for="var-y">Eixo Y</label>
+        <select id="var-y" aria-label="Variável do eixo Y"></select>
+      </div>
+      <div class="controls">
+        <label for="relacao-nivel">Nuvem de pontos</label>
+        <select id="relacao-nivel" aria-label="Município ou estado">
+          <option value="municipio">Por município (ano de referência de cada variável)</option>
+          <option value="estado">Por estado (ano escolhido)</option>
+        </select>
+        <span id="relacao-ano-wrap" hidden>
+          <label for="relacao-ano">Ano</label>
+          <select id="relacao-ano" aria-label="Ano (relações por estado)"></select>
+        </span>
+      </div>
+      <div class="controls">
+        <label for="relacao-uf">+ Estado</label>
+        <select id="relacao-uf" aria-label="Destacar um estado"></select>
+        <label for="relacao-muni">+ Município</label>
+        <input class="inp" id="relacao-muni" list="muni-datalist" placeholder="Buscar município…" aria-label="Destacar um município">
+        <button type="button" id="relacao-muni-limpar" title="Remover município">×</button>
+      </div>
+      <div class="chart-box">
+        <div id="relacao_chart" aria-label="Relação entre duas variáveis"></div>
+        <div class="tooltip" id="tt-relacao"></div>
+      </div>
+      <div class="legend" id="relacao_legend"></div>
+      <p class="stat-line" id="relacao_nota">—</p>
+    </div>
+  </div>
+
+  <datalist id="muni-datalist"></datalist>
+
+  <details class="footnote">
+    <summary>Sobre estes dados</summary>
+    <div>
+      Painel final mape_municipios (4 Base Final/mape_municipios.parquet), consolidando as 17 dimensões.
+      Os indicadores de "mapa", "tempo" e "relações" são uma seleção das variáveis numéricas de maior cobertura
+      de cada dimensão (até 6 por dimensão) — não a base inteira. Valores monetários (PIB, receita total
+      municipal) estão deflacionados (IPCA, referência dezembro de 2023, via <code>deflateBR</code>) — os demais
+      valores monetários do painel completo permanecem nominais. "Por município" usa, para cada variável, o ano
+      mais recente com cobertura de pelo menos 50% dos municípios (pode diferir entre variáveis); os demais
+      recortes usam a média do ano escolhido. Mesorregiões e microrregiões seguem a divisão do IBGE de 2010
+      (última disponível). Nomes de pessoas responsáveis/validadoras não constam neste catálogo.
+    </div>
+  </details>
+
+</div>
+
+<footer class="page">mape_municipios · MAPE, IESP-UERJ</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- fetch helpers / cache ----------
+  const CACHE = {};
+  function csv(path) {
+    if (!CACHE[path]) CACHE[path] = d3.csv(path, d3.autoType);
+    return CACHE[path];
+  }
+  function json(path) {
+    if (!CACHE[path]) CACHE[path] = d3.json(path);
+    return CACHE[path];
+  }
+
+  function fmt(n) {
+    if (n == null || Number.isNaN(n)) return "—";
+    return d3.format(",.0f")(n).replace(/,/g, ".");
+  }
+  function fmtDec(n, d) {
+    if (n == null || Number.isNaN(n)) return "—";
+    return (+n).toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+  function toNum(v) { if (v === "" || v == null) return null; const n = +v; return Number.isNaN(n) ? null : n; }
+  function msg(el, text) { el.innerHTML = `<p style="color:var(--fg-muted);font-size:.85rem;padding:20px 0;text-align:center;margin:0;">${text}</p>`; }
+
+  const COR = { brasil: "var(--accent)", uf: "var(--accent-2)", municipio: "var(--accent-3)" };
+
+  // Domínio por percentil (2–98%) em vez de min/max: evita que um único
+  // outlier (ex.: o Distrito Federal, que concentra numa só "unidade" o que em
+  // outros estados está dividido entre dezenas de municípios) estique a escala
+  // de cor e deixe todo o resto do mapa sem contraste.
+  function escalaCorRobusta(vals) {
+    const ordenados = vals.slice().sort(d3.ascending);
+    const lo = d3.quantileSorted(ordenados, 0.02), hi = d3.quantileSorted(ordenados, 0.98);
+    const dominio = lo < hi ? [lo, hi] : d3.extent(vals);
+    return d3.scaleSequential(dominio, d3.interpolateBlues).clamp(true);
+  }
+
+  // ================= carregamento inicial =================
+  Promise.all([
+    csv("data/resumo.csv"), csv("data/dimensoes.csv"), csv("data/curadas.csv"), csv("data/dicionario.csv"),
+    csv("data/serie_tempo.csv"), csv("data/estado_ano.csv"), csv("data/snapshot.csv"), csv("data/municipios.csv"),
+    json("data/estados.json")
+  ]).then(([resumo, dimensoes, curadas, dicionario, serieTempo, estadoAno, snapshot, municipios, estados]) => {
+
+    const DATA = { resumo, dimensoes, curadas, dicionario, serieTempo, estadoAno, snapshot, municipios, estados };
+
+    // ---------- cabeçalho ----------
+    const r0 = resumo[0];
+    document.getElementById("subtitulo").textContent =
+      `${fmt(r0.n_dimensoes)} dimensões, ${fmt(r0.n_variaveis)} variáveis e ${fmt(r0.n_observacoes)} observações município-ano, de ${r0.ano_min} a ${r0.ano_max}.`;
+    document.getElementById("t_dimensoes").textContent = fmt(r0.n_dimensoes);
+    document.getElementById("t_variaveis").textContent = fmt(r0.n_variaveis);
+    document.getElementById("t_observacoes").textContent = fmt(r0.n_observacoes);
+    document.getElementById("t_periodo").textContent = `${r0.ano_min}–${r0.ano_max}`;
+    document.getElementById("t_municipios").textContent = fmt(r0.n_municipios);
+
+    // ---------- datalist de municípios ----------
+    const muniPorLabel = new Map();
+    const dl = document.getElementById("muni-datalist");
+    municipios.filter((m) => m.nome).slice().sort((a, b) => a.nome.localeCompare(b.nome)).forEach((m) => {
+      const label = `${m.nome} (${m.sigla_uf})`;
+      muniPorLabel.set(label.toLowerCase(), m);
+      dl.appendChild(new Option(label));
+    });
+    function resolverMunicipio(texto) {
+      if (!texto) return null;
+      return muniPorLabel.get(texto.trim().toLowerCase()) || null;
+    }
+
+    // ---------- dimensões (barras) + filtro compartilhado ----------
+    let dimensaoFiltro = "";
+    const elDimChart = document.getElementById("dimensoes_chart");
+    const elFiltroDim = document.getElementById("filtro-dim");
+
+    function desenharDimensoes() {
+      const rows = dimensoes;
+      const max = d3.max(rows, (d) => +d.n_variaveis) || 1;
+      elDimChart.innerHTML = "";
+      rows.forEach((d) => {
+        const bar = document.createElement("div");
+        bar.className = "dim-bar" + (dimensaoFiltro === d.dimensao_slug ? " is-active" : "");
+        bar.innerHTML = `
+          <div class="name">${d.dimensao}</div>
+          <div class="track"><div class="fill" style="width:${(100 * d.n_variaveis / max).toFixed(1)}%"></div></div>
+          <div class="val">${fmt(+d.n_variaveis)}</div>`;
+        bar.addEventListener("click", () => {
+          dimensaoFiltro = dimensaoFiltro === d.dimensao_slug ? "" : d.dimensao_slug;
+          elFiltroDim.value = dimensaoFiltro;
+          desenharDimensoes(); desenharDicionario();
+        });
+        elDimChart.appendChild(bar);
+      });
+    }
+
+    elFiltroDim.replaceChildren(new Option("Todas as dimensões", ""),
+      ...dimensoes.map((d) => new Option(`${d.dimensao} (${d.n_variaveis})`, d.dimensao_slug)));
+    elFiltroDim.onchange = () => { dimensaoFiltro = elFiltroDim.value; desenharDimensoes(); desenharDicionario(); };
+    desenharDimensoes();
+
+    // ---------- dicionário ----------
+    const buscaInput = document.getElementById("busca-dic");
+    const elDicRows = document.getElementById("dic_rows"), elDicNota = document.getElementById("dic_nota");
+    const LIMITE_DIC = 250;
+
+    function dicFiltrado() {
+      const termo = (buscaInput.value || "").trim().toLowerCase();
+      let linhas = dicionario;
+      if (dimensaoFiltro) linhas = linhas.filter((d) => d.dimensao_slug === dimensaoFiltro);
+      if (termo) linhas = linhas.filter((d) =>
+        (d.variavel || "").toLowerCase().includes(termo) || (d.descricao || "").toLowerCase().includes(termo));
+      return { total: linhas.length, mostrar: linhas.slice(0, LIMITE_DIC) };
+    }
+
+    function desenharDicionario() {
+      const f = dicFiltrado();
+      elDicRows.innerHTML = "";
+      f.mostrar.forEach((d) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td class="var">${d.variavel}</td><td>${d.dimensao || ""}</td><td>${d.descricao || ""}</td><td>${d.natureza || ""}</td><td>${d.escopo_temporal || ""}</td>`;
+        elDicRows.appendChild(tr);
+      });
+      elDicNota.textContent = f.total > LIMITE_DIC
+        ? `Mostrando ${LIMITE_DIC} de ${fmt(f.total)} variáveis — refine a busca para ver outras.`
+        : `${fmt(f.total)} variável${f.total === 1 ? "" : "eis"}.`;
+    }
+    buscaInput.addEventListener("input", desenharDicionario);
+    desenharDicionario();
+
+    // ================= MAPA =================
+    const elVarMapa = document.getElementById("var-mapa"), elNivelMapa = document.getElementById("nivel-mapa");
+    const elAnoMapa = document.getElementById("ano-mapa"), elAnoMapaWrap = document.getElementById("ano-mapa-wrap");
+    const elMapaChart = document.getElementById("mapa_chart"), elMapaNota = document.getElementById("mapa_nota");
+    const ttMapa = document.getElementById("tt-mapa");
+
+    elVarMapa.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
+    elVarMapa.value = (curadas.find((d) => d.variavel === "ivs_media") || curadas[0]).variavel;
+
+    const NIVEL_MAPA_CFG = {
+      estado: { geo: "data/estados.json", tabela: "data/estado_ano.csv", key: "sigla_uf", nome: "nome_uf", numeric: false },
+      meso: { geo: "data/mesorregioes.geojson", tabela: "data/meso_ano.csv", key: "code_meso", nome: "name_meso", numeric: true },
+      micro: { geo: "data/microrregioes.geojson", tabela: "data/micro_ano.csv", key: "code_micro", nome: "name_micro", numeric: true },
+      municipio: { geo: "data/municipios_0.02.geojson", tabela: null, key: "code_muni", nome: "name_muni", numeric: true }
+    };
+    function chaveMapa(cfg, valorPropriedade) {
+      return cfg.numeric ? String(Math.round(+valorPropriedade)) : String(valorPropriedade);
+    }
+
+    function carregarNivelMapa(nivel) {
+      const cfg = NIVEL_MAPA_CFG[nivel];
+      const ps = [json(cfg.geo)];
+      if (cfg.tabela) ps.push(csv(cfg.tabela));
+      return Promise.all(ps).then(([geo, tabela]) => ({ geo, tabela: tabela || null }));
+    }
+
+    function atualizarAnoMapa() {
+      const nivel = elNivelMapa.value;
+      if (nivel === "municipio") { elAnoMapaWrap.style.display = "none"; return Promise.resolve(); }
+      elAnoMapaWrap.style.display = "";
+      return carregarNivelMapa(nivel).then(({ tabela }) => {
+        const variavel = elVarMapa.value;
+        const anos = Array.from(new Set(tabela.filter((d) => d.variavel === variavel).map((d) => +d.ano))).sort((a, b) => a - b);
+        const atual = toNum(elAnoMapa.value);
+        elAnoMapa.replaceChildren(...anos.map((a) => new Option(String(a), String(a))));
+        if (anos.length) elAnoMapa.value = String(atual && anos.includes(atual) ? atual : anos[anos.length - 1]);
+      });
+    }
+
+    function desenharMapa() {
+      const nivel = elNivelMapa.value, variavel = elVarMapa.value;
+      const curadaRow = curadas.find((d) => d.variavel === variavel);
+      carregarNivelMapa(nivel).then(({ geo, tabela }) => {
+        const valores = new Map();
+        let anoTxt = "";
+        if (nivel === "municipio") {
+          snapshot.filter((d) => d.variavel === variavel).forEach((d) => valores.set(String(d.id_municipio), +d.valor));
+          const refs = snapshot.filter((d) => d.variavel === variavel);
+          anoTxt = refs.length ? String(refs[0].ano_referencia) : "";
+        } else {
+          const ano = toNum(elAnoMapa.value);
+          anoTxt = String(ano);
+          const cfg = NIVEL_MAPA_CFG[nivel];
+          tabela.filter((d) => d.variavel === variavel && +d.ano === ano).forEach((d) => valores.set(String(d[cfg.key]), +d.media));
+        }
+
+        const width = elMapaChart.clientWidth || 600, height = Math.min(620, width * 1.0);
+        elMapaChart.innerHTML = "";
+        const vals = Array.from(valores.values()).filter((v) => !Number.isNaN(v));
+        if (!vals.length) { msg(elMapaChart, "Sem dados para este indicador/recorte."); elMapaNota.textContent = "—"; return; }
+        const color = escalaCorRobusta(vals);
+        const cfg = NIVEL_MAPA_CFG[nivel];
+
+        const svg = d3.create("svg").attr("width", "100%").attr("height", height).attr("viewBox", `0 0 ${width} ${height}`).attr("role", "img")
+          .attr("aria-label", curadaRow ? `Mapa de ${curadaRow.rotulo}` : "Mapa");
+        const projection = d3.geoMercator().fitSize([width, height], geo);
+        const path = d3.geoPath().projection(projection);
+
+        svg.append("g").selectAll("path").data(geo.features).join("path")
+          .attr("d", path)
+          .attr("fill", (d) => {
+            const v = valores.get(chaveMapa(cfg, d.properties[cfg.key]));
+            return v == null ? "var(--grid)" : color(v);
+          })
+          .attr("stroke", "var(--bg)").attr("stroke-width", nivel === "estado" ? 1 : 0.3)
+          .on("mouseenter", (ev, d) => {
+            const v = valores.get(chaveMapa(cfg, d.properties[cfg.key]));
+            ttMapa.style.opacity = 1;
+            ttMapa.innerHTML = `<b>${d.properties[cfg.nome] || ""}</b><br>${v == null ? "sem dado" : fmtDec(v, 2)}`;
+            const r2 = elMapaChart.getBoundingClientRect();
+            ttMapa.style.left = (ev.clientX - r2.left + 10) + "px";
+            ttMapa.style.top = (ev.clientY - r2.top - 10) + "px";
+          })
+          .on("mouseleave", () => { ttMapa.style.opacity = 0; });
+
+        elMapaChart.appendChild(svg.node());
+        const rotuloNivel = { estado: "UF", meso: "mesorregião", micro: "microrregião", municipio: "município" }[nivel];
+        elMapaNota.textContent = curadaRow
+          ? `${curadaRow.rotulo} (${curadaRow.unidade}) · ${anoTxt} · média por ${rotuloNivel}.`
+          : "—";
+      });
+    }
+
+    elVarMapa.onchange = () => { atualizarAnoMapa().then(desenharMapa); };
+    elNivelMapa.onchange = () => { atualizarAnoMapa().then(desenharMapa); };
+    elAnoMapa.onchange = desenharMapa;
+    atualizarAnoMapa().then(desenharMapa);
+
+    // ================= TEMPO =================
+    const elVarTempo = document.getElementById("var-tempo"), elUfTempo = document.getElementById("uf-tempo");
+    const elMuniTempo = document.getElementById("muni-tempo"), elMuniTempoLimpar = document.getElementById("muni-tempo-limpar");
+    const elTempoChart = document.getElementById("tempo_chart"), elTempoNota = document.getElementById("tempo_nota");
+    const elTempoLegend = document.getElementById("tempo_legend");
+    const ttTempo = document.getElementById("tt-tempo");
+
+    elVarTempo.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
+    elVarTempo.value = (curadas.find((d) => d.variavel === "tx_mort_csap_aj_cens") || curadas[0]).variavel;
+
+    const ufList = estados.features.map((f) => f.properties).sort((a, b) => a.sigla_uf.localeCompare(b.sigla_uf));
+    elUfTempo.replaceChildren(new Option("Nenhum estado", ""), ...ufList.map((u) => new Option(`${u.sigla_uf} — ${u.nome_uf}`, u.sigla_uf)));
+
+    const MUNI_SERIE_CACHE = {};
+    function serieMunicipio(variavel) {
+      if (!MUNI_SERIE_CACHE[variavel]) MUNI_SERIE_CACHE[variavel] = d3.csv(`data/muni_serie/${variavel}.csv`, d3.autoType).catch(() => []);
+      return MUNI_SERIE_CACHE[variavel];
+    }
+
+    function linhasSerie(variavel) {
+      return serieTempo.filter((d) => d.variavel === variavel).map((d) => ({ ano: +d.ano, media: +d.media, n: +d.n })).sort((a, b) => a.ano - b.ano);
+    }
+    function linhasUf(variavel, uf) {
+      return estadoAno.filter((d) => d.variavel === variavel && d.sigla_uf === uf).map((d) => ({ ano: +d.ano, media: +d.media })).sort((a, b) => a.ano - b.ano);
+    }
+
+    function desenharLegendaTempo(uf, muni) {
+      const itens = [`<span><span class="sw" style="background:${COR.brasil}"></span>Brasil</span>`];
+      if (uf) itens.push(`<span><span class="sw" style="background:${COR.uf}"></span>${uf}</span>`);
+      if (muni) itens.push(`<span><span class="sw" style="background:${COR.municipio}"></span>${muni.nome} (${muni.sigla_uf})</span>`);
+      elTempoLegend.innerHTML = itens.join("");
+    }
+
+    function desenharSerieMulti(el, tt, series, curadaRow) {
+      const width = el.clientWidth || 600, height = 260, margin = { top: 10, right: 16, bottom: 28, left: 56 };
+      el.innerHTML = "";
+      const todas = series.flatMap((s) => s.linhas);
+      const svg = d3.create("svg").attr("width", "100%").attr("height", height).attr("viewBox", `0 0 ${width} ${height}`).attr("role", "img")
+        .attr("aria-label", curadaRow ? `Evolução de ${curadaRow.rotulo}` : "Série temporal");
+      if (!todas.length) { msg(el, "Sem dados para este indicador."); return; }
+
+      const x = d3.scaleLinear().domain(d3.extent(todas, (d) => d.ano)).range([margin.left, width - margin.right]);
+      const y = d3.scaleLinear().domain([0, d3.max(todas, (d) => d.media) * 1.1 || 1]).range([height - margin.bottom, margin.top]);
+
+      svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format("d")))
+        .call((g) => g.selectAll("text").attr("fill", "var(--fg-muted)")).call((g) => g.selectAll("line,path").attr("stroke", "var(--axis)"));
+      svg.append("g").attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(5).tickFormat((d) => d3.format(".2~s")(d).replace(".", ",")))
+        .call((g) => g.selectAll("text").attr("fill", "var(--fg-muted)")).call((g) => g.selectAll("line,path").attr("stroke", "var(--axis)"));
+
+      const line = d3.line().x((d) => x(d.ano)).y((d) => y(d.media));
+      series.forEach((s) => {
+        if (!s.linhas.length) return;
+        svg.append("path").datum(s.linhas).attr("fill", "none").attr("stroke", s.cor).attr("stroke-width", 2)
+          .attr("stroke-dasharray", s.dash || null).attr("d", line);
+        svg.append("g").selectAll("circle").data(s.linhas).join("circle")
+          .attr("cx", (d) => x(d.ano)).attr("cy", (d) => y(d.media)).attr("r", 3)
+          .attr("fill", s.cor)
+          .on("mouseenter", (ev, d) => {
+            tt.style.opacity = 1;
+            tt.innerHTML = `<b>${s.label} · ${d.ano}</b><br>${fmtDec(d.media, 2)}${d.n != null ? ` (${fmt(d.n)} municípios)` : ""}`;
+            const r = el.getBoundingClientRect();
+            tt.style.left = (ev.clientX - r.left + 10) + "px"; tt.style.top = (ev.clientY - r.top - 10) + "px";
+          })
+          .on("mouseleave", () => { tt.style.opacity = 0; });
+      });
+      el.appendChild(svg.node());
+    }
+
+    function desenharTempo() {
+      const variavel = elVarTempo.value, uf = elUfTempo.value, muniTxt = elMuniTempo.value;
+      const curadaRow = curadas.find((d) => d.variavel === variavel);
+      const muni = resolverMunicipio(muniTxt);
+
+      const series = [{ label: "Brasil", cor: COR.brasil, linhas: linhasSerie(variavel) }];
+      if (uf) series.push({ label: uf, cor: COR.uf, dash: "6,3", linhas: linhasUf(variavel, uf) });
+
+      const desenhaAgora = () => {
+        desenharSerieMulti(elTempoChart, ttTempo, series, curadaRow);
+        desenharLegendaTempo(uf, muni);
+        elTempoNota.textContent = curadaRow ? `${curadaRow.rotulo} (${curadaRow.unidade}) — dimensão: ${curadaRow.slug}.` : "—";
+      };
+
+      if (muni) {
+        msg(elTempoChart, "Carregando município…");
+        serieMunicipio(variavel).then((rows) => {
+          const linhas = rows.filter((d) => String(d.id_municipio) === String(muni.id_municipio))
+            .map((d) => ({ ano: +d.ano, media: +d.valor })).sort((a, b) => a.ano - b.ano);
+          series.push({ label: `${muni.nome} (${muni.sigla_uf})`, cor: COR.municipio, dash: "2,2", linhas });
+          desenhaAgora();
+        });
+      } else {
+        desenhaAgora();
+      }
+    }
+
+    elVarTempo.onchange = desenharTempo;
+    elUfTempo.onchange = desenharTempo;
+    elMuniTempo.addEventListener("change", desenharTempo);
+    elMuniTempoLimpar.addEventListener("click", () => { elMuniTempo.value = ""; desenharTempo(); });
+    desenharTempo();
+
+    // ================= RELAÇÕES =================
+    const elVarX = document.getElementById("var-x"), elVarY = document.getElementById("var-y");
+    const elRelNivel = document.getElementById("relacao-nivel"), elRelAno = document.getElementById("relacao-ano"), elRelAnoWrap = document.getElementById("relacao-ano-wrap");
+    const elRelUf = document.getElementById("relacao-uf"), elRelMuni = document.getElementById("relacao-muni"), elRelMuniLimpar = document.getElementById("relacao-muni-limpar");
+    const elRelChart = document.getElementById("relacao_chart"), elRelNota = document.getElementById("relacao_nota"), elRelLegend = document.getElementById("relacao_legend");
+    const ttRel = document.getElementById("tt-relacao");
+
+    elVarX.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
+    const xPadrao = curadas.find((d) => d.variavel === "ivs_media") || curadas[0];
+    elVarX.value = xPadrao.variavel;
+    elVarY.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
+    elVarY.value = (curadas.find((d) => d.variavel.includes("risco_inundacao"))
+      || curadas.find((d) => d.slug !== xPadrao.slug) || curadas[1] || curadas[0]).variavel;
+    elRelUf.replaceChildren(new Option("Nenhum estado", ""), ...ufList.map((u) => new Option(`${u.sigla_uf} — ${u.nome_uf}`, u.sigla_uf)));
+
+    function atualizarAnoRelacao() {
+      const vx = elVarX.value, vy = elVarY.value;
+      const anosX = new Set(estadoAno.filter((d) => d.variavel === vx).map((d) => +d.ano));
+      const anosComuns = Array.from(new Set(estadoAno.filter((d) => d.variavel === vy).map((d) => +d.ano))).filter((a) => anosX.has(a)).sort((a, b) => a - b);
+      const atual = toNum(elRelAno.value);
+      elRelAno.replaceChildren(...anosComuns.map((a) => new Option(String(a), String(a))));
+      if (anosComuns.length) elRelAno.value = String(atual && anosComuns.includes(atual) ? atual : anosComuns[anosComuns.length - 1]);
+    }
+    atualizarAnoRelacao();
+
+    elRelNivel.addEventListener("change", () => { elRelAnoWrap.hidden = elRelNivel.value !== "estado"; desenharRelacao(); });
+
+    function pearson(xs, ys) {
+      const n = xs.length, mx = d3.mean(xs), my = d3.mean(ys);
+      let num = 0, dx2 = 0, dy2 = 0;
+      for (let i = 0; i < n; i++) { const dx = xs[i] - mx, dy = ys[i] - my; num += dx * dy; dx2 += dx * dx; dy2 += dy * dy; }
+      return num / Math.sqrt(dx2 * dy2);
+    }
+
+    function mediaBrasil(variavel, ano) {
+      const linhas = serieTempo.filter((d) => d.variavel === variavel && (ano == null || +d.ano === ano));
+      if (!linhas.length) return null;
+      return ano == null ? d3.mean(linhas, (d) => +d.media) : +linhas[0].media;
+    }
+    function mediaUf(variavel, uf, ano) {
+      const row = estadoAno.find((d) => d.variavel === variavel && d.sigla_uf === uf && +d.ano === ano);
+      return row ? +row.media : null;
+    }
+    function valorMunicipio(variavel, idMunicipio) {
+      const row = snapshot.find((d) => d.variavel === variavel && String(d.id_municipio) === String(idMunicipio));
+      return row ? { valor: +row.valor, ano: row.ano_referencia } : null;
+    }
+    function anoReferencia(variavel) {
+      const row = snapshot.find((d) => d.variavel === variavel);
+      return row ? +row.ano_referencia : null;
+    }
+
+    function calcularRelacao() {
+      const vx = elVarX.value, vy = elVarY.value;
+      const cx = curadas.find((d) => d.variavel === vx), cy = curadas.find((d) => d.variavel === vy);
+      const nivel = elRelNivel.value;
+
+      let pontos = [];
+      let anoUso = null;
+      if (nivel === "estado") {
+        anoUso = toNum(elRelAno.value);
+        const porUf = new Map();
+        estadoAno.forEach((row) => {
+          if ((row.variavel !== vx && row.variavel !== vy) || +row.ano !== anoUso) return;
+          const m = porUf.get(row.sigla_uf) || {};
+          m[row.variavel] = +row.media;
+          porUf.set(row.sigla_uf, m);
+        });
+        porUf.forEach((m, uf) => { if (m[vx] != null && m[vy] != null && !Number.isNaN(m[vx]) && !Number.isNaN(m[vy])) pontos.push({ x: m[vx], y: m[vy], label: uf }); });
+      } else {
+        const porMuni = new Map();
+        snapshot.forEach((row) => {
+          if (row.variavel !== vx && row.variavel !== vy) return;
+          const m = porMuni.get(row.id_municipio) || {};
+          m[row.variavel] = +row.valor;
+          porMuni.set(row.id_municipio, m);
+        });
+        porMuni.forEach((m, id) => { if (m[vx] != null && m[vy] != null && !Number.isNaN(m[vx]) && !Number.isNaN(m[vy])) pontos.push({ x: m[vx], y: m[vy], idMunicipio: id }); });
+      }
+
+      // Brasil, estado destacado, município destacado — sempre calculados, independente da nuvem de fundo
+      const anoBrasilX = nivel === "estado" ? anoUso : anoReferencia(vx);
+      const anoBrasilY = nivel === "estado" ? anoUso : anoReferencia(vy);
+      const brasil = { x: mediaBrasil(vx, anoBrasilX), y: mediaBrasil(vy, anoBrasilY) };
+
+      let destacarUf = null;
+      const uf = elRelUf.value;
+      if (uf) {
+        const anoUf = nivel === "estado" ? anoUso : anoReferencia(vx);
+        const anoUfY = nivel === "estado" ? anoUso : anoReferencia(vy);
+        const ux = mediaUf(vx, uf, anoUf), uy = mediaUf(vy, uf, anoUfY);
+        if (ux != null && uy != null) destacarUf = { x: ux, y: uy, label: uf };
+      }
+
+      let destacarMunicipio = null;
+      const muni = resolverMunicipio(elRelMuni.value);
+      if (muni) {
+        const mx = valorMunicipio(vx, muni.id_municipio), my = valorMunicipio(vy, muni.id_municipio);
+        if (mx && my) destacarMunicipio = { x: mx.valor, y: my.valor, label: `${muni.nome} (${muni.sigla_uf})` };
+      }
+
+      return { vx, vy, cx, cy, pontos, nivel, ano: anoUso, brasil, destacarUf, destacarMunicipio };
+    }
+
+    function desenharRelacao() {
+      const calc = calcularRelacao();
+      const { vx, vy, cx, cy, pontos, nivel, brasil, destacarUf, destacarMunicipio } = calc;
+      const width = elRelChart.clientWidth || 600, height = 300, margin = { top: 10, right: 16, bottom: 36, left: 56 };
+      elRelChart.innerHTML = "";
+      const svg = d3.create("svg").attr("width", "100%").attr("height", height).attr("viewBox", `0 0 ${width} ${height}`).attr("role", "img")
+        .attr("aria-label", `Relação entre ${cx ? cx.rotulo : vx} e ${cy ? cy.rotulo : vy}`);
+
+      if (vx === vy) { msg(elRelChart, "Escolha duas variáveis diferentes."); elRelLegend.innerHTML = ""; elRelNota.textContent = "—"; return; }
+      if (!pontos.length) { msg(elRelChart, nivel === "estado" ? "Sem estados com as duas variáveis observadas nesse ano." : "Sem municípios com as duas variáveis observadas."); elRelLegend.innerHTML = ""; elRelNota.textContent = "—"; return; }
+
+      const extraX = [brasil.x, destacarUf && destacarUf.x, destacarMunicipio && destacarMunicipio.x].filter((v) => v != null);
+      const extraY = [brasil.y, destacarUf && destacarUf.y, destacarMunicipio && destacarMunicipio.y].filter((v) => v != null);
+      const x = d3.scaleLinear().domain(d3.extent([...pontos.map((d) => d.x), ...extraX])).nice().range([margin.left, width - margin.right]);
+      const y = d3.scaleLinear().domain(d3.extent([...pontos.map((d) => d.y), ...extraY])).nice().range([height - margin.bottom, margin.top]);
+
+      svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format(".2~s")))
+        .call((g) => g.selectAll("text").attr("fill", "var(--fg-muted)")).call((g) => g.selectAll("line,path").attr("stroke", "var(--axis)"));
+      svg.append("g").attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".2~s")))
+        .call((g) => g.selectAll("text").attr("fill", "var(--fg-muted)")).call((g) => g.selectAll("line,path").attr("stroke", "var(--axis)"));
+
+      svg.append("text").attr("x", (margin.left + width - margin.right) / 2).attr("y", height - 4).attr("text-anchor", "middle")
+        .style("fill", "var(--fg-muted)").style("font-size", "11px").text(cx ? cx.rotulo : vx);
+      svg.append("text").attr("transform", `translate(14,${(margin.top + height - margin.bottom) / 2}) rotate(-90)`).attr("text-anchor", "middle")
+        .style("fill", "var(--fg-muted)").style("font-size", "11px").text(cy ? cy.rotulo : vy);
+
+      svg.append("g").selectAll("circle").data(pontos).join("circle")
+        .attr("cx", (d) => x(d.x)).attr("cy", (d) => y(d.y)).attr("r", 2.6)
+        .attr("fill", "var(--fg-muted)").attr("opacity", 0.35)
+        .on("mouseenter", (ev, d) => {
+          ttRel.style.opacity = 1;
+          ttRel.innerHTML = `${d.label ? `<b>${d.label}</b><br>` : ""}x: ${fmtDec(d.x, 2)}<br>y: ${fmtDec(d.y, 2)}`;
+          const r2 = elRelChart.getBoundingClientRect();
+          ttRel.style.left = (ev.clientX - r2.left + 10) + "px"; ttRel.style.top = (ev.clientY - r2.top - 10) + "px";
+        })
+        .on("mouseleave", () => { ttRel.style.opacity = 0; });
+
+      function marcarDestaque(ponto, cor, rotulo) {
+        if (!ponto || ponto.x == null || ponto.y == null) return;
+        svg.append("circle").attr("cx", x(ponto.x)).attr("cy", y(ponto.y)).attr("r", 6)
+          .attr("fill", cor).attr("stroke", "var(--panel)").attr("stroke-width", 1.5)
+          .on("mouseenter", (ev) => {
+            ttRel.style.opacity = 1;
+            ttRel.innerHTML = `<b>${rotulo}</b><br>x: ${fmtDec(ponto.x, 2)}<br>y: ${fmtDec(ponto.y, 2)}`;
+            const r2 = elRelChart.getBoundingClientRect();
+            ttRel.style.left = (ev.clientX - r2.left + 10) + "px"; ttRel.style.top = (ev.clientY - r2.top - 10) + "px";
+          })
+          .on("mouseleave", () => { ttRel.style.opacity = 0; });
+      }
+      marcarDestaque(brasil, COR.brasil, "Brasil (média)");
+      marcarDestaque(destacarUf, COR.uf, destacarUf ? destacarUf.label : "");
+      marcarDestaque(destacarMunicipio, COR.municipio, destacarMunicipio ? destacarMunicipio.label : "");
+
+      elRelChart.appendChild(svg.node());
+
+      const legendaItens = [`<span><span class="dot" style="background:${COR.brasil}"></span>Brasil (média)</span>`];
+      if (destacarUf) legendaItens.push(`<span><span class="dot" style="background:${COR.uf}"></span>${destacarUf.label}</span>`);
+      if (destacarMunicipio) legendaItens.push(`<span><span class="dot" style="background:${COR.municipio}"></span>${destacarMunicipio.label}</span>`);
+      elRelLegend.innerHTML = legendaItens.join("");
+
+      const unidade = nivel === "estado" ? "estados" : "municípios";
+      const corr = pearson(pontos.map((p) => p.x), pontos.map((p) => p.y));
+      const anoTxt = nivel === "estado"
+        ? `Ano: ${calc.ano}.`
+        : (cx && cy ? `Ano de referência: ${cx.rotulo} e ${cy.rotulo} usam, cada uma, o ano mais recente com ≥50% de cobertura (podem diferir).` : "");
+      elRelNota.innerHTML = `${fmt(pontos.length)} ${unidade} com as duas variáveis observadas · correlação de Pearson: <b>${fmtDec(corr, 2)}</b>. ${anoTxt}`;
+    }
+
+    elVarX.onchange = () => { atualizarAnoRelacao(); desenharRelacao(); };
+    elVarY.onchange = () => { atualizarAnoRelacao(); desenharRelacao(); };
+    elRelAno.onchange = desenharRelacao;
+    elRelUf.onchange = desenharRelacao;
+    elRelMuni.addEventListener("change", desenharRelacao);
+    elRelMuniLimpar.addEventListener("click", () => { elRelMuni.value = ""; desenharRelacao(); });
+    desenharRelacao();
+
+  }).catch((err) => {
+    document.querySelector(".wrap").insertAdjacentHTML("afterbegin",
+      `<p style="color:#b33;">Falha ao carregar os dados (${err.message || err}). Verifique se os arquivos em <code>data/</code> estão publicados junto com esta página.</p>`);
+    console.error(err);
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explorador mape_municipios</title>
-<meta name="description" content="Explorador interativo do banco de dados em painel mape_municipios (MAPE/IESP-UERJ): dicionário de variáveis, mapas, séries temporais e relações entre indicadores.">
+<meta name="description" content="Explorador interativo do banco de dados em painel mape_municipios (MAPE/IESP-UERJ): dicionário de variáveis, mapas, séries temporais, relações entre indicadores e rankings.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
   :root {
@@ -39,6 +39,7 @@
   .card .sub { color: var(--fg-muted); font-size: 0.82rem; margin: 0 0 12px; }
   .card .sub code { font-size: 0.78rem; }
   .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+  .controls[hidden] { display: none; }
   .controls label { font-size: 0.78rem; color: var(--fg-muted); margin-right: -2px; }
   .select, select, input.inp {
     font: inherit; font-size: 0.86rem; padding: 6px 9px; border: 1px solid var(--border); border-radius: 7px;
@@ -52,8 +53,9 @@
   .dim-bar .track { flex: 1 1 auto; min-width: 0; height: 17px; background: var(--grid); border-radius: 3px; position: relative; overflow: hidden; }
   .dim-bar .fill { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 3px; }
   .dim-bar .name { width: 170px; flex: 0 0 170px; font-size: 0.78rem; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dim-bar .val { width: 36px; flex: 0 0 36px; font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
-  .dim-bar.is-active .track { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .dim-bar .val { width: 60px; flex: 0 0 60px; font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+  .dim-bar.is-active .track { outline: 2px solid var(--accent-3); outline-offset: 1px; }
+  .rank-sep { text-align: center; color: var(--fg-muted); font-size: 0.75rem; margin: 2px 0; }
   table.dic { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
   table.dic th, table.dic td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
   table.dic th { color: var(--fg-muted); font-weight: 600; position: sticky; top: 0; background: var(--panel); }
@@ -115,10 +117,14 @@
 
   <div class="card">
     <h2>Mapa</h2>
-    <p class="sub">Média do indicador por recorte geográfico escolhido.</p>
+    <p class="sub">Média do indicador por recorte geográfico, com ponderação opcional pela população ou pela área dos municípios.</p>
     <div class="controls">
+      <label for="dim-mapa">Dimensão</label>
+      <select id="dim-mapa" aria-label="Dimensão (mapa)"></select>
       <label for="var-mapa">Indicador</label>
       <select id="var-mapa" aria-label="Indicador (mapa)"></select>
+    </div>
+    <div class="controls">
       <label for="nivel-mapa">Recorte</label>
       <select id="nivel-mapa" aria-label="Nível geográfico do mapa">
         <option value="estado">Estado</option>
@@ -129,6 +135,14 @@
       <span id="ano-mapa-wrap">
         <label for="ano-mapa">Ano</label>
         <select id="ano-mapa" aria-label="Ano (mapa)"></select>
+      </span>
+      <span id="pond-mapa-wrap">
+        <label for="pond-mapa">Ponderar por</label>
+        <select id="pond-mapa" aria-label="Ponderação (mapa)">
+          <option value="">Sem ponderação</option>
+          <option value="pop">População</option>
+          <option value="area">Área</option>
+        </select>
       </span>
     </div>
     <div class="chart-box">
@@ -143,8 +157,18 @@
       <h2>Exploração ao longo do tempo</h2>
       <p class="sub">Média por ano — no espírito de <code>calculate_growth()</code> / <code>calculate_moving_average()</code>. Compare o Brasil com um estado e/ou um município.</p>
       <div class="controls">
+        <label for="dim-tempo">Dimensão</label>
+        <select id="dim-tempo" aria-label="Dimensão (tempo)"></select>
         <label for="var-tempo">Indicador</label>
         <select id="var-tempo" aria-label="Indicador (tempo)"></select>
+      </div>
+      <div class="controls">
+        <label for="pond-tempo">Ponderar por</label>
+        <select id="pond-tempo" aria-label="Ponderação (tempo)">
+          <option value="">Sem ponderação</option>
+          <option value="pop">População</option>
+          <option value="area">Área</option>
+        </select>
       </div>
       <div class="controls">
         <label for="uf-tempo">+ Estado</label>
@@ -165,8 +189,14 @@
       <h2>Relações entre indicadores</h2>
       <p class="sub">No espírito de <code>typology_mape()</code> / <code>compare_group()</code>. O ponto do Brasil é sempre mostrado; destaque também um estado e/ou um município.</p>
       <div class="controls">
+        <label for="dim-x">Dimensão X</label>
+        <select id="dim-x" aria-label="Dimensão do eixo X"></select>
         <label for="var-x">Eixo X</label>
         <select id="var-x" aria-label="Variável do eixo X"></select>
+      </div>
+      <div class="controls">
+        <label for="dim-y">Dimensão Y</label>
+        <select id="dim-y" aria-label="Dimensão do eixo Y"></select>
         <label for="var-y">Eixo Y</label>
         <select id="var-y" aria-label="Variável do eixo Y"></select>
       </div>
@@ -180,6 +210,12 @@
           <label for="relacao-ano">Ano</label>
           <select id="relacao-ano" aria-label="Ano (relações por estado)"></select>
         </span>
+        <label for="relacao-pond">Ponderar por</label>
+        <select id="relacao-pond" aria-label="Ponderação (relações)">
+          <option value="">Sem ponderação</option>
+          <option value="pop">População</option>
+          <option value="area">Área</option>
+        </select>
       </div>
       <div class="controls">
         <label for="relacao-uf">+ Estado</label>
@@ -197,19 +233,74 @@
     </div>
   </div>
 
+  <div class="card">
+    <h2>Ranking</h2>
+    <p class="sub">Classifica estados, mesorregiões, microrregiões ou municípios pelo indicador escolhido — protótipo para uma futura <code>rank_mape()</code>. No recorte "Município", compare um município com os demais do Brasil, do seu estado ou da sua microrregião.</p>
+    <div class="controls">
+      <label for="dim-rank">Dimensão</label>
+      <select id="dim-rank" aria-label="Dimensão (ranking)"></select>
+      <label for="var-rank">Indicador</label>
+      <select id="var-rank" aria-label="Indicador (ranking)"></select>
+    </div>
+    <div class="controls">
+      <label for="nivel-rank">Recorte</label>
+      <select id="nivel-rank" aria-label="Nível geográfico do ranking">
+        <option value="estado">Estado</option>
+        <option value="meso">Mesorregião</option>
+        <option value="micro">Microrregião</option>
+        <option value="municipio">Município</option>
+      </select>
+      <span id="ano-rank-wrap">
+        <label for="ano-rank">Ano</label>
+        <select id="ano-rank" aria-label="Ano (ranking)"></select>
+      </span>
+      <span id="pond-rank-wrap">
+        <label for="pond-rank">Ponderar por</label>
+        <select id="pond-rank" aria-label="Ponderação (ranking)">
+          <option value="">Sem ponderação</option>
+          <option value="pop">População</option>
+          <option value="area">Área</option>
+        </select>
+      </span>
+      <label for="ordem-rank">Ordem</label>
+      <select id="ordem-rank" aria-label="Ordem do ranking">
+        <option value="desc">Maior → menor</option>
+        <option value="asc">Menor → maior</option>
+      </select>
+    </div>
+    <div class="controls" id="rank-municipio-wrap" hidden>
+      <label for="rank-escopo">Comparar no nível de</label>
+      <select id="rank-escopo" aria-label="Escopo de comparação do município">
+        <option value="brasil">Brasil</option>
+        <option value="estado">Mesmo estado</option>
+        <option value="micro">Mesma microrregião</option>
+      </select>
+      <label for="rank-municipio">Município de referência</label>
+      <input class="inp" id="rank-municipio" list="muni-datalist" placeholder="Buscar município…" aria-label="Município de referência">
+      <button type="button" id="rank-municipio-limpar" title="Remover">×</button>
+    </div>
+    <div id="rank_chart" aria-label="Ranking">—</div>
+    <p class="table-note" id="rank_nota">—</p>
+  </div>
+
   <datalist id="muni-datalist"></datalist>
 
   <details class="footnote">
     <summary>Sobre estes dados</summary>
     <div>
       Painel final mape_municipios (4 Base Final/mape_municipios.parquet), consolidando as 17 dimensões.
-      Os indicadores de "mapa", "tempo" e "relações" são uma seleção das variáveis numéricas de maior cobertura
-      de cada dimensão (até 6 por dimensão) — não a base inteira. Valores monetários (PIB, receita total
-      municipal) estão deflacionados (IPCA, referência dezembro de 2023, via <code>deflateBR</code>) — os demais
-      valores monetários do painel completo permanecem nominais. "Por município" usa, para cada variável, o ano
-      mais recente com cobertura de pelo menos 50% dos municípios (pode diferir entre variáveis); os demais
-      recortes usam a média do ano escolhido. Mesorregiões e microrregiões seguem a divisão do IBGE de 2010
-      (última disponível). Nomes de pessoas responsáveis/validadoras não constam neste catálogo.
+      Os indicadores de "mapa", "tempo", "relações" e "ranking" são uma seleção das variáveis numéricas de maior
+      cobertura de cada dimensão (até 15 por dimensão) — não a base inteira. Valores monetários (PIB, receita
+      total municipal, benefícios, despesas etc.) estão deflacionados (IPCA, referência dezembro de 2023, via
+      <code>deflateBR</code>) — os demais valores monetários do painel completo permanecem nominais. Médias por
+      estado/mesorregião/microrregião/Brasil podem ser ponderadas pela população estimada do ano ou pela área do
+      município (ou sem ponderação); são recalculadas no navegador a partir da série completa por município, o
+      que também é o que torna possível comparar qualquer estado ou município com a média nacional. "Por
+      município" usa, para cada variável, o ano mais recente com cobertura de pelo menos 50% dos municípios (pode
+      diferir entre variáveis). Mesorregiões e microrregiões seguem a divisão do IBGE de 2010 (última disponível).
+      Esta página também serve como protótipo para testar as futuras funções do pacote <code>mapemunicipios</code>
+      (agregação ponderada, rankings, comparações). Nomes de pessoas responsáveis/validadoras não constam neste
+      catálogo.
     </div>
   </details>
 
@@ -231,6 +322,9 @@
     if (!CACHE[path]) CACHE[path] = d3.json(path);
     return CACHE[path];
   }
+  function serieMunicipio(variavel) {
+    return csv(`data/muni_serie/${variavel}.csv`).catch(() => []);
+  }
 
   function fmt(n) {
     if (n == null || Number.isNaN(n)) return "—";
@@ -242,6 +336,8 @@
   }
   function toNum(v) { if (v === "" || v == null) return null; const n = +v; return Number.isNaN(n) ? null : n; }
   function msg(el, text) { el.innerHTML = `<p style="color:var(--fg-muted);font-size:.85rem;padding:20px 0;text-align:center;margin:0;">${text}</p>`; }
+  function pondTxt(p) { return p ? `, ponderado por ${p === "pop" ? "população" : "área"}` : ""; }
+  function unidadeTxt(u) { return u ? ` (${u})` : ""; }
 
   const COR = { brasil: "var(--accent)", uf: "var(--accent-2)", municipio: "var(--accent-3)" };
 
@@ -259,11 +355,11 @@
   // ================= carregamento inicial =================
   Promise.all([
     csv("data/resumo.csv"), csv("data/dimensoes.csv"), csv("data/curadas.csv"), csv("data/dicionario.csv"),
-    csv("data/serie_tempo.csv"), csv("data/estado_ano.csv"), csv("data/snapshot.csv"), csv("data/municipios.csv"),
+    csv("data/municipios.csv"), csv("data/municipio_regiao.csv"), csv("data/pop_municipio_ano.csv"),
+    csv("data/area_municipio.csv"), csv("data/snapshot.csv"), csv("data/meso_lookup.csv"), csv("data/micro_lookup.csv"),
     json("data/estados.json")
-  ]).then(([resumo, dimensoes, curadas, dicionario, serieTempo, estadoAno, snapshot, municipios, estados]) => {
-
-    const DATA = { resumo, dimensoes, curadas, dicionario, serieTempo, estadoAno, snapshot, municipios, estados };
+  ]).then(([resumo, dimensoes, curadas, dicionario, municipios, municipioRegiao, popMunicipioAno,
+            areaMunicipio, snapshot, mesoLookup, microLookup, estados]) => {
 
     // ---------- cabeçalho ----------
     const r0 = resumo[0];
@@ -274,6 +370,57 @@
     document.getElementById("t_observacoes").textContent = fmt(r0.n_observacoes);
     document.getElementById("t_periodo").textContent = `${r0.ano_min}–${r0.ano_max}`;
     document.getElementById("t_municipios").textContent = fmt(r0.n_municipios);
+
+    // ---------- crosswalks geográficos e pesos ----------
+    const MUNI_INFO = new Map();
+    municipios.forEach((m) => MUNI_INFO.set(String(m.id_municipio), { nome: m.nome, sigla_uf: m.sigla_uf, code_meso: null, code_micro: null }));
+    municipioRegiao.forEach((m) => {
+      const id = String(m.id_municipio);
+      const info = MUNI_INFO.get(id) || { nome: "", sigla_uf: "" };
+      info.code_meso = m.code_meso != null ? String(m.code_meso) : null;
+      info.code_micro = m.code_micro != null ? String(m.code_micro) : null;
+      MUNI_INFO.set(id, info);
+    });
+    const POP = new Map();
+    popMunicipioAno.forEach((p) => POP.set(String(p.id_municipio) + "|" + p.ano, +p.populacao));
+    const AREA = new Map();
+    areaMunicipio.forEach((a) => AREA.set(String(a.id_municipio), +a.area_total));
+
+    const ufList = estados.features.map((f) => f.properties).sort((a, b) => a.sigla_uf.localeCompare(b.sigla_uf));
+    const NOME_UF = new Map(ufList.map((u) => [u.sigla_uf, u.nome_uf]));
+    const NOME_MESO = new Map(mesoLookup.map((m) => [String(m.code_meso), m.name_meso]));
+    const NOME_MICRO = new Map(microLookup.map((m) => [String(m.code_micro), m.name_micro]));
+
+    function pesoDe(id, ano, pond) {
+      if (!pond) return 1;
+      if (pond === "pop") { const v = POP.get(id + "|" + ano); return v == null ? null : v; }
+      if (pond === "area") { const v = AREA.get(id); return v == null ? null : v; }
+      return 1;
+    }
+    const GRUPO_FN = {
+      estado: (id) => { const i = MUNI_INFO.get(id); return i ? i.sigla_uf : null; },
+      meso: (id) => { const i = MUNI_INFO.get(id); return i && i.code_meso != null ? i.code_meso : null; },
+      micro: (id) => { const i = MUNI_INFO.get(id); return i && i.code_micro != null ? i.code_micro : null; }
+    };
+    // Agrega linhas {id_municipio, ano, valor} por grupo (grupoFn) e ano, com
+    // média simples ou ponderada — base de toda agregação geográfica da
+    // página (protótipo do que uma futura aggregate_mape(dado, nivel, peso)
+    // do pacote faria).
+    function agregarMuni(linhas, grupoFn, pond) {
+      const acc = new Map();
+      for (const d of linhas) {
+        const id = String(d.id_municipio);
+        const grupo = grupoFn ? grupoFn(id) : "BR";
+        if (grupoFn && !grupo) continue;
+        const peso = pesoDe(id, d.ano, pond);
+        if (peso == null || Number.isNaN(peso) || peso <= 0) continue;
+        const key = grupo + "|" + d.ano;
+        let a = acc.get(key);
+        if (!a) { a = { grupo, ano: +d.ano, somaPeso: 0, somaValorPeso: 0, n: 0 }; acc.set(key, a); }
+        a.somaPeso += peso; a.somaValorPeso += peso * d.valor; a.n += 1;
+      }
+      return Array.from(acc.values()).map((a) => ({ grupo: a.grupo, ano: a.ano, media: a.somaValorPeso / a.somaPeso, n: a.n }));
+    }
 
     // ---------- datalist de municípios ----------
     const muniPorLabel = new Map();
@@ -288,7 +435,7 @@
       return muniPorLabel.get(texto.trim().toLowerCase()) || null;
     }
 
-    // ---------- dimensões (barras) + filtro compartilhado ----------
+    // ---------- dimensões (barras) + filtro compartilhado do dicionário ----------
     let dimensaoFiltro = "";
     const elDimChart = document.getElementById("dimensoes_chart");
     const elFiltroDim = document.getElementById("filtro-dim");
@@ -347,60 +494,81 @@
     buscaInput.addEventListener("input", desenharDicionario);
     desenharDicionario();
 
+    // ---------- seletor Dimensão → Indicador (reutilizado em mapa/tempo/relações/ranking) ----------
+    const CONTAGEM_SLUG = new Map();
+    curadas.forEach((c) => CONTAGEM_SLUG.set(c.slug, (CONTAGEM_SLUG.get(c.slug) || 0) + 1));
+    const DIMS_COM_VARS = dimensoes.filter((d) => CONTAGEM_SLUG.has(d.dimensao_slug));
+
+    function montarSeletorDimVar(elDim, elVar, variavelPreferida, onChange) {
+      elDim.replaceChildren(...DIMS_COM_VARS.map((d) =>
+        new Option(`${d.dimensao} (${CONTAGEM_SLUG.get(d.dimensao_slug)})`, d.dimensao_slug)));
+
+      function popularVar(slug, preferida) {
+        const vars = curadas.filter((c) => c.slug === slug);
+        elVar.replaceChildren(...vars.map((c) => new Option(c.rotulo, c.variavel)));
+        elVar.value = preferida && vars.some((c) => c.variavel === preferida) ? preferida : vars[0].variavel;
+      }
+
+      const prefRow = variavelPreferida && curadas.find((c) => c.variavel === variavelPreferida);
+      const slugInicial = prefRow ? prefRow.slug : DIMS_COM_VARS[0].dimensao_slug;
+      elDim.value = slugInicial;
+      popularVar(slugInicial, variavelPreferida);
+
+      elDim.onchange = () => { popularVar(elDim.value, null); onChange(); };
+      elVar.onchange = onChange;
+    }
+
     // ================= MAPA =================
-    const elVarMapa = document.getElementById("var-mapa"), elNivelMapa = document.getElementById("nivel-mapa");
+    const elDimMapa = document.getElementById("dim-mapa"), elVarMapa = document.getElementById("var-mapa");
+    const elNivelMapa = document.getElementById("nivel-mapa");
     const elAnoMapa = document.getElementById("ano-mapa"), elAnoMapaWrap = document.getElementById("ano-mapa-wrap");
+    const elPondMapa = document.getElementById("pond-mapa"), elPondMapaWrap = document.getElementById("pond-mapa-wrap");
     const elMapaChart = document.getElementById("mapa_chart"), elMapaNota = document.getElementById("mapa_nota");
     const ttMapa = document.getElementById("tt-mapa");
 
-    elVarMapa.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
-    elVarMapa.value = (curadas.find((d) => d.variavel === "ivs_media") || curadas[0]).variavel;
-
     const NIVEL_MAPA_CFG = {
-      estado: { geo: "data/estados.json", tabela: "data/estado_ano.csv", key: "sigla_uf", nome: "nome_uf", numeric: false },
-      meso: { geo: "data/mesorregioes.geojson", tabela: "data/meso_ano.csv", key: "code_meso", nome: "name_meso", numeric: true },
-      micro: { geo: "data/microrregioes.geojson", tabela: "data/micro_ano.csv", key: "code_micro", nome: "name_micro", numeric: true },
-      municipio: { geo: "data/municipios_0.02.geojson", tabela: null, key: "code_muni", nome: "name_muni", numeric: true }
+      estado: { geo: "data/estados.json", key: "sigla_uf", nome: "nome_uf", numeric: false },
+      meso: { geo: "data/mesorregioes.geojson", key: "code_meso", nome: "name_meso", numeric: true },
+      micro: { geo: "data/microrregioes.geojson", key: "code_micro", nome: "name_micro", numeric: true },
+      municipio: { geo: "data/municipios_0.02.geojson", key: "code_muni", nome: "name_muni", numeric: true }
     };
     function chaveMapa(cfg, valorPropriedade) {
       return cfg.numeric ? String(Math.round(+valorPropriedade)) : String(valorPropriedade);
     }
 
-    function carregarNivelMapa(nivel) {
-      const cfg = NIVEL_MAPA_CFG[nivel];
-      const ps = [json(cfg.geo)];
-      if (cfg.tabela) ps.push(csv(cfg.tabela));
-      return Promise.all(ps).then(([geo, tabela]) => ({ geo, tabela: tabela || null }));
-    }
-
-    function atualizarAnoMapa() {
-      const nivel = elNivelMapa.value;
-      if (nivel === "municipio") { elAnoMapaWrap.style.display = "none"; return Promise.resolve(); }
-      elAnoMapaWrap.style.display = "";
-      return carregarNivelMapa(nivel).then(({ tabela }) => {
-        const variavel = elVarMapa.value;
-        const anos = Array.from(new Set(tabela.filter((d) => d.variavel === variavel).map((d) => +d.ano))).sort((a, b) => a - b);
-        const atual = toNum(elAnoMapa.value);
-        elAnoMapa.replaceChildren(...anos.map((a) => new Option(String(a), String(a))));
-        if (anos.length) elAnoMapa.value = String(atual && anos.includes(atual) ? atual : anos[anos.length - 1]);
-      });
+    function atualizarVisibilidadeMapa() {
+      const ehMunicipio = elNivelMapa.value === "municipio";
+      elAnoMapaWrap.style.display = ehMunicipio ? "none" : "";
+      elPondMapaWrap.style.display = ehMunicipio ? "none" : "";
     }
 
     function desenharMapa() {
-      const nivel = elNivelMapa.value, variavel = elVarMapa.value;
+      const nivel = elNivelMapa.value, variavel = elVarMapa.value, pond = elPondMapa.value;
       const curadaRow = curadas.find((d) => d.variavel === variavel);
-      carregarNivelMapa(nivel).then(({ geo, tabela }) => {
+      const cfg = NIVEL_MAPA_CFG[nivel];
+      msg(elMapaChart, "Carregando…");
+
+      const pGeo = json(cfg.geo);
+      const pValores = nivel === "municipio"
+        ? Promise.resolve(null)
+        : serieMunicipio(variavel);
+
+      Promise.all([pGeo, pValores]).then(([geo, rows]) => {
         const valores = new Map();
         let anoTxt = "";
         if (nivel === "municipio") {
-          snapshot.filter((d) => d.variavel === variavel).forEach((d) => valores.set(String(d.id_municipio), +d.valor));
           const refs = snapshot.filter((d) => d.variavel === variavel);
+          refs.forEach((d) => valores.set(String(d.id_municipio), +d.valor));
           anoTxt = refs.length ? String(refs[0].ano_referencia) : "";
         } else {
-          const ano = toNum(elAnoMapa.value);
+          const anos = Array.from(new Set(rows.map((d) => +d.ano))).sort((a, b) => a - b);
+          const atual = toNum(elAnoMapa.value);
+          elAnoMapa.replaceChildren(...anos.map((a) => new Option(String(a), String(a))));
+          const ano = anos.length ? (atual && anos.includes(atual) ? atual : anos[anos.length - 1]) : null;
+          if (ano != null) elAnoMapa.value = String(ano);
           anoTxt = String(ano);
-          const cfg = NIVEL_MAPA_CFG[nivel];
-          tabela.filter((d) => d.variavel === variavel && +d.ano === ano).forEach((d) => valores.set(String(d[cfg.key]), +d.media));
+          agregarMuni(rows, GRUPO_FN[nivel], pond).filter((r) => r.ano === ano)
+            .forEach((r) => valores.set(String(r.grupo), r.media));
         }
 
         const width = elMapaChart.clientWidth || 600, height = Math.min(620, width * 1.0);
@@ -408,7 +576,6 @@
         const vals = Array.from(valores.values()).filter((v) => !Number.isNaN(v));
         if (!vals.length) { msg(elMapaChart, "Sem dados para este indicador/recorte."); elMapaNota.textContent = "—"; return; }
         const color = escalaCorRobusta(vals);
-        const cfg = NIVEL_MAPA_CFG[nivel];
 
         const svg = d3.create("svg").attr("width", "100%").attr("height", height).attr("viewBox", `0 0 ${width} ${height}`).attr("role", "img")
           .attr("aria-label", curadaRow ? `Mapa de ${curadaRow.rotulo}` : "Mapa");
@@ -435,41 +602,28 @@
         elMapaChart.appendChild(svg.node());
         const rotuloNivel = { estado: "UF", meso: "mesorregião", micro: "microrregião", municipio: "município" }[nivel];
         elMapaNota.textContent = curadaRow
-          ? `${curadaRow.rotulo} (${curadaRow.unidade}) · ${anoTxt} · média por ${rotuloNivel}.`
+          ? `${curadaRow.rotulo}${unidadeTxt(curadaRow.unidade)} · ${anoTxt} · média por ${rotuloNivel}${nivel === "municipio" ? "" : pondTxt(pond)}.`
           : "—";
       });
     }
 
-    elVarMapa.onchange = () => { atualizarAnoMapa().then(desenharMapa); };
-    elNivelMapa.onchange = () => { atualizarAnoMapa().then(desenharMapa); };
+    montarSeletorDimVar(elDimMapa, elVarMapa, "ivs_media", () => { atualizarVisibilidadeMapa(); desenharMapa(); });
+    elNivelMapa.onchange = () => { atualizarVisibilidadeMapa(); desenharMapa(); };
     elAnoMapa.onchange = desenharMapa;
-    atualizarAnoMapa().then(desenharMapa);
+    elPondMapa.onchange = desenharMapa;
+    atualizarVisibilidadeMapa();
+    desenharMapa();
 
     // ================= TEMPO =================
-    const elVarTempo = document.getElementById("var-tempo"), elUfTempo = document.getElementById("uf-tempo");
+    const elDimTempo = document.getElementById("dim-tempo"), elVarTempo = document.getElementById("var-tempo");
+    const elPondTempo = document.getElementById("pond-tempo");
+    const elUfTempo = document.getElementById("uf-tempo");
     const elMuniTempo = document.getElementById("muni-tempo"), elMuniTempoLimpar = document.getElementById("muni-tempo-limpar");
     const elTempoChart = document.getElementById("tempo_chart"), elTempoNota = document.getElementById("tempo_nota");
     const elTempoLegend = document.getElementById("tempo_legend");
     const ttTempo = document.getElementById("tt-tempo");
 
-    elVarTempo.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
-    elVarTempo.value = (curadas.find((d) => d.variavel === "tx_mort_csap_aj_cens") || curadas[0]).variavel;
-
-    const ufList = estados.features.map((f) => f.properties).sort((a, b) => a.sigla_uf.localeCompare(b.sigla_uf));
     elUfTempo.replaceChildren(new Option("Nenhum estado", ""), ...ufList.map((u) => new Option(`${u.sigla_uf} — ${u.nome_uf}`, u.sigla_uf)));
-
-    const MUNI_SERIE_CACHE = {};
-    function serieMunicipio(variavel) {
-      if (!MUNI_SERIE_CACHE[variavel]) MUNI_SERIE_CACHE[variavel] = d3.csv(`data/muni_serie/${variavel}.csv`, d3.autoType).catch(() => []);
-      return MUNI_SERIE_CACHE[variavel];
-    }
-
-    function linhasSerie(variavel) {
-      return serieTempo.filter((d) => d.variavel === variavel).map((d) => ({ ano: +d.ano, media: +d.media, n: +d.n })).sort((a, b) => a.ano - b.ano);
-    }
-    function linhasUf(variavel, uf) {
-      return estadoAno.filter((d) => d.variavel === variavel && d.sigla_uf === uf).map((d) => ({ ano: +d.ano, media: +d.media })).sort((a, b) => a.ano - b.ano);
-    }
 
     function desenharLegendaTempo(uf, muni) {
       const itens = [`<span><span class="sw" style="background:${COR.brasil}"></span>Brasil</span>`];
@@ -516,64 +670,48 @@
     }
 
     function desenharTempo() {
-      const variavel = elVarTempo.value, uf = elUfTempo.value, muniTxt = elMuniTempo.value;
+      const variavel = elVarTempo.value, uf = elUfTempo.value, muniTxt = elMuniTempo.value, pond = elPondTempo.value;
       const curadaRow = curadas.find((d) => d.variavel === variavel);
       const muni = resolverMunicipio(muniTxt);
+      msg(elTempoChart, "Carregando…");
 
-      const series = [{ label: "Brasil", cor: COR.brasil, linhas: linhasSerie(variavel) }];
-      if (uf) series.push({ label: uf, cor: COR.uf, dash: "6,3", linhas: linhasUf(variavel, uf) });
-
-      const desenhaAgora = () => {
+      serieMunicipio(variavel).then((rows) => {
+        const nacional = agregarMuni(rows, null, pond).sort((a, b) => a.ano - b.ano)
+          .map((r) => ({ ano: r.ano, media: r.media, n: r.n }));
+        const series = [{ label: "Brasil", cor: COR.brasil, linhas: nacional }];
+        if (uf) {
+          const porUf = agregarMuni(rows, GRUPO_FN.estado, pond).filter((r) => r.grupo === uf)
+            .sort((a, b) => a.ano - b.ano).map((r) => ({ ano: r.ano, media: r.media }));
+          series.push({ label: uf, cor: COR.uf, dash: "6,3", linhas: porUf });
+        }
+        if (muni) {
+          const porMuni = rows.filter((d) => String(d.id_municipio) === String(muni.id_municipio))
+            .map((d) => ({ ano: +d.ano, media: +d.valor })).sort((a, b) => a.ano - b.ano);
+          series.push({ label: `${muni.nome} (${muni.sigla_uf})`, cor: COR.municipio, dash: "2,2", linhas: porMuni });
+        }
         desenharSerieMulti(elTempoChart, ttTempo, series, curadaRow);
         desenharLegendaTempo(uf, muni);
-        elTempoNota.textContent = curadaRow ? `${curadaRow.rotulo} (${curadaRow.unidade}) — dimensão: ${curadaRow.slug}.` : "—";
-      };
-
-      if (muni) {
-        msg(elTempoChart, "Carregando município…");
-        serieMunicipio(variavel).then((rows) => {
-          const linhas = rows.filter((d) => String(d.id_municipio) === String(muni.id_municipio))
-            .map((d) => ({ ano: +d.ano, media: +d.valor })).sort((a, b) => a.ano - b.ano);
-          series.push({ label: `${muni.nome} (${muni.sigla_uf})`, cor: COR.municipio, dash: "2,2", linhas });
-          desenhaAgora();
-        });
-      } else {
-        desenhaAgora();
-      }
+        elTempoNota.textContent = curadaRow ? `${curadaRow.rotulo}${unidadeTxt(curadaRow.unidade)} — dimensão: ${curadaRow.slug}${pondTxt(pond)}.` : "—";
+      });
     }
 
-    elVarTempo.onchange = desenharTempo;
+    montarSeletorDimVar(elDimTempo, elVarTempo, "tx_mort_csap_aj_cens", desenharTempo);
+    elPondTempo.onchange = desenharTempo;
     elUfTempo.onchange = desenharTempo;
     elMuniTempo.addEventListener("change", desenharTempo);
     elMuniTempoLimpar.addEventListener("click", () => { elMuniTempo.value = ""; desenharTempo(); });
     desenharTempo();
 
     // ================= RELAÇÕES =================
-    const elVarX = document.getElementById("var-x"), elVarY = document.getElementById("var-y");
+    const elDimX = document.getElementById("dim-x"), elVarX = document.getElementById("var-x");
+    const elDimY = document.getElementById("dim-y"), elVarY = document.getElementById("var-y");
     const elRelNivel = document.getElementById("relacao-nivel"), elRelAno = document.getElementById("relacao-ano"), elRelAnoWrap = document.getElementById("relacao-ano-wrap");
+    const elRelPond = document.getElementById("relacao-pond");
     const elRelUf = document.getElementById("relacao-uf"), elRelMuni = document.getElementById("relacao-muni"), elRelMuniLimpar = document.getElementById("relacao-muni-limpar");
     const elRelChart = document.getElementById("relacao_chart"), elRelNota = document.getElementById("relacao_nota"), elRelLegend = document.getElementById("relacao_legend");
     const ttRel = document.getElementById("tt-relacao");
 
-    elVarX.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
-    const xPadrao = curadas.find((d) => d.variavel === "ivs_media") || curadas[0];
-    elVarX.value = xPadrao.variavel;
-    elVarY.replaceChildren(...curadas.map((d) => new Option(d.rotulo, d.variavel)));
-    elVarY.value = (curadas.find((d) => d.variavel.includes("risco_inundacao"))
-      || curadas.find((d) => d.slug !== xPadrao.slug) || curadas[1] || curadas[0]).variavel;
     elRelUf.replaceChildren(new Option("Nenhum estado", ""), ...ufList.map((u) => new Option(`${u.sigla_uf} — ${u.nome_uf}`, u.sigla_uf)));
-
-    function atualizarAnoRelacao() {
-      const vx = elVarX.value, vy = elVarY.value;
-      const anosX = new Set(estadoAno.filter((d) => d.variavel === vx).map((d) => +d.ano));
-      const anosComuns = Array.from(new Set(estadoAno.filter((d) => d.variavel === vy).map((d) => +d.ano))).filter((a) => anosX.has(a)).sort((a, b) => a - b);
-      const atual = toNum(elRelAno.value);
-      elRelAno.replaceChildren(...anosComuns.map((a) => new Option(String(a), String(a))));
-      if (anosComuns.length) elRelAno.value = String(atual && anosComuns.includes(atual) ? atual : anosComuns[anosComuns.length - 1]);
-    }
-    atualizarAnoRelacao();
-
-    elRelNivel.addEventListener("change", () => { elRelAnoWrap.hidden = elRelNivel.value !== "estado"; desenharRelacao(); });
 
     function pearson(xs, ys) {
       const n = xs.length, mx = d3.mean(xs), my = d3.mean(ys);
@@ -582,85 +720,84 @@
       return num / Math.sqrt(dx2 * dy2);
     }
 
-    function mediaBrasil(variavel, ano) {
-      const linhas = serieTempo.filter((d) => d.variavel === variavel && (ano == null || +d.ano === ano));
-      if (!linhas.length) return null;
-      return ano == null ? d3.mean(linhas, (d) => +d.media) : +linhas[0].media;
-    }
-    function mediaUf(variavel, uf, ano) {
-      const row = estadoAno.find((d) => d.variavel === variavel && d.sigla_uf === uf && +d.ano === ano);
-      return row ? +row.media : null;
-    }
-    function valorMunicipio(variavel, idMunicipio) {
-      const row = snapshot.find((d) => d.variavel === variavel && String(d.id_municipio) === String(idMunicipio));
-      return row ? { valor: +row.valor, ano: row.ano_referencia } : null;
-    }
     function anoReferencia(variavel) {
       const row = snapshot.find((d) => d.variavel === variavel);
       return row ? +row.ano_referencia : null;
     }
 
-    function calcularRelacao() {
-      const vx = elVarX.value, vy = elVarY.value;
-      const cx = curadas.find((d) => d.variavel === vx), cy = curadas.find((d) => d.variavel === vy);
-      const nivel = elRelNivel.value;
-
-      let pontos = [];
-      let anoUso = null;
-      if (nivel === "estado") {
-        anoUso = toNum(elRelAno.value);
-        const porUf = new Map();
-        estadoAno.forEach((row) => {
-          if ((row.variavel !== vx && row.variavel !== vy) || +row.ano !== anoUso) return;
-          const m = porUf.get(row.sigla_uf) || {};
-          m[row.variavel] = +row.media;
-          porUf.set(row.sigla_uf, m);
-        });
-        porUf.forEach((m, uf) => { if (m[vx] != null && m[vy] != null && !Number.isNaN(m[vx]) && !Number.isNaN(m[vy])) pontos.push({ x: m[vx], y: m[vy], label: uf }); });
-      } else {
-        const porMuni = new Map();
-        snapshot.forEach((row) => {
-          if (row.variavel !== vx && row.variavel !== vy) return;
-          const m = porMuni.get(row.id_municipio) || {};
-          m[row.variavel] = +row.valor;
-          porMuni.set(row.id_municipio, m);
-        });
-        porMuni.forEach((m, id) => { if (m[vx] != null && m[vy] != null && !Number.isNaN(m[vx]) && !Number.isNaN(m[vy])) pontos.push({ x: m[vx], y: m[vy], idMunicipio: id }); });
-      }
-
-      // Brasil, estado destacado, município destacado — sempre calculados, independente da nuvem de fundo
-      const anoBrasilX = nivel === "estado" ? anoUso : anoReferencia(vx);
-      const anoBrasilY = nivel === "estado" ? anoUso : anoReferencia(vy);
-      const brasil = { x: mediaBrasil(vx, anoBrasilX), y: mediaBrasil(vy, anoBrasilY) };
-
-      let destacarUf = null;
-      const uf = elRelUf.value;
-      if (uf) {
-        const anoUf = nivel === "estado" ? anoUso : anoReferencia(vx);
-        const anoUfY = nivel === "estado" ? anoUso : anoReferencia(vy);
-        const ux = mediaUf(vx, uf, anoUf), uy = mediaUf(vy, uf, anoUfY);
-        if (ux != null && uy != null) destacarUf = { x: ux, y: uy, label: uf };
-      }
-
-      let destacarMunicipio = null;
-      const muni = resolverMunicipio(elRelMuni.value);
-      if (muni) {
-        const mx = valorMunicipio(vx, muni.id_municipio), my = valorMunicipio(vy, muni.id_municipio);
-        if (mx && my) destacarMunicipio = { x: mx.valor, y: my.valor, label: `${muni.nome} (${muni.sigla_uf})` };
-      }
-
-      return { vx, vy, cx, cy, pontos, nivel, ano: anoUso, brasil, destacarUf, destacarMunicipio };
+    function atualizarAnoRelacao(rowsX, rowsY) {
+      const anosX = new Set(rowsX.map((d) => +d.ano));
+      const anosComuns = Array.from(new Set(rowsY.map((d) => +d.ano))).filter((a) => anosX.has(a)).sort((a, b) => a - b);
+      const atual = toNum(elRelAno.value);
+      elRelAno.replaceChildren(...anosComuns.map((a) => new Option(String(a), String(a))));
+      if (anosComuns.length) elRelAno.value = String(atual && anosComuns.includes(atual) ? atual : anosComuns[anosComuns.length - 1]);
+      return anosComuns.length ? toNum(elRelAno.value) : null;
     }
 
+    elRelNivel.addEventListener("change", () => { elRelAnoWrap.hidden = elRelNivel.value !== "estado"; desenharRelacao(); });
+
     function desenharRelacao() {
-      const calc = calcularRelacao();
-      const { vx, vy, cx, cy, pontos, nivel, brasil, destacarUf, destacarMunicipio } = calc;
+      const vx = elVarX.value, vy = elVarY.value;
+      const cx = curadas.find((d) => d.variavel === vx), cy = curadas.find((d) => d.variavel === vy);
+      const nivel = elRelNivel.value, pond = elRelPond.value;
+      if (vx === vy) { msg(elRelChart, "Escolha duas variáveis diferentes."); elRelLegend.innerHTML = ""; elRelNota.textContent = "—"; return; }
+      msg(elRelChart, "Carregando…");
+
+      Promise.all([serieMunicipio(vx), serieMunicipio(vy)]).then(([rowsX, rowsY]) => {
+        let pontos = [];
+        let anoUso = null;
+
+        if (nivel === "estado") {
+          anoUso = atualizarAnoRelacao(rowsX, rowsY);
+          const aggX = new Map(agregarMuni(rowsX, GRUPO_FN.estado, pond).filter((r) => r.ano === anoUso).map((r) => [r.grupo, r.media]));
+          const aggY = new Map(agregarMuni(rowsY, GRUPO_FN.estado, pond).filter((r) => r.ano === anoUso).map((r) => [r.grupo, r.media]));
+          aggX.forEach((vxv, uf) => { const vyv = aggY.get(uf); if (vyv != null && !Number.isNaN(vxv) && !Number.isNaN(vyv)) pontos.push({ x: vxv, y: vyv, label: uf }); });
+        } else {
+          const porMuni = new Map();
+          snapshot.forEach((row) => {
+            if (row.variavel !== vx && row.variavel !== vy) return;
+            const m = porMuni.get(row.id_municipio) || {};
+            m[row.variavel] = +row.valor;
+            porMuni.set(row.id_municipio, m);
+          });
+          porMuni.forEach((m, id) => { if (m[vx] != null && m[vy] != null && !Number.isNaN(m[vx]) && !Number.isNaN(m[vy])) pontos.push({ x: m[vx], y: m[vy], idMunicipio: id }); });
+        }
+
+        // Brasil, estado destacado e município destacado: sempre calculados a
+        // partir das mesmas séries por município, independente da nuvem de fundo.
+        const anoRefX = nivel === "estado" ? anoUso : anoReferencia(vx);
+        const anoRefY = nivel === "estado" ? anoUso : anoReferencia(vy);
+        const brX = agregarMuni(rowsX, null, pond).find((r) => r.ano === anoRefX);
+        const brY = agregarMuni(rowsY, null, pond).find((r) => r.ano === anoRefY);
+        const brasil = { x: brX ? brX.media : null, y: brY ? brY.media : null };
+
+        let destacarUf = null;
+        const uf = elRelUf.value;
+        if (uf) {
+          const ux = agregarMuni(rowsX, GRUPO_FN.estado, pond).find((r) => r.ano === anoRefX && r.grupo === uf);
+          const uy = agregarMuni(rowsY, GRUPO_FN.estado, pond).find((r) => r.ano === anoRefY && r.grupo === uf);
+          if (ux && uy) destacarUf = { x: ux.media, y: uy.media, label: uf };
+        }
+
+        let destacarMunicipio = null;
+        const muni = resolverMunicipio(elRelMuni.value);
+        if (muni) {
+          const mx = rowsX.find((d) => String(d.id_municipio) === String(muni.id_municipio));
+          const my = rowsY.find((d) => String(d.id_municipio) === String(muni.id_municipio));
+          if (mx && my) destacarMunicipio = { x: +mx.valor, y: +my.valor, label: `${muni.nome} (${muni.sigla_uf})` };
+        }
+
+        renderRelacao({ vx, vy, cx, cy, pontos, nivel, ano: anoUso, pond, brasil, destacarUf, destacarMunicipio });
+      });
+    }
+
+    function renderRelacao(calc) {
+      const { vx, vy, cx, cy, pontos, nivel, brasil, destacarUf, destacarMunicipio, pond } = calc;
       const width = elRelChart.clientWidth || 600, height = 300, margin = { top: 10, right: 16, bottom: 36, left: 56 };
       elRelChart.innerHTML = "";
       const svg = d3.create("svg").attr("width", "100%").attr("height", height).attr("viewBox", `0 0 ${width} ${height}`).attr("role", "img")
         .attr("aria-label", `Relação entre ${cx ? cx.rotulo : vx} e ${cy ? cy.rotulo : vy}`);
 
-      if (vx === vy) { msg(elRelChart, "Escolha duas variáveis diferentes."); elRelLegend.innerHTML = ""; elRelNota.textContent = "—"; return; }
       if (!pontos.length) { msg(elRelChart, nivel === "estado" ? "Sem estados com as duas variáveis observadas nesse ano." : "Sem municípios com as duas variáveis observadas."); elRelLegend.innerHTML = ""; elRelNota.textContent = "—"; return; }
 
       const extraX = [brasil.x, destacarUf && destacarUf.x, destacarMunicipio && destacarMunicipio.x].filter((v) => v != null);
@@ -709,7 +846,7 @@
 
       elRelChart.appendChild(svg.node());
 
-      const legendaItens = [`<span><span class="dot" style="background:${COR.brasil}"></span>Brasil (média)</span>`];
+      const legendaItens = [`<span><span class="dot" style="background:${COR.brasil}"></span>Brasil (média${pondTxt(pond)})</span>`];
       if (destacarUf) legendaItens.push(`<span><span class="dot" style="background:${COR.uf}"></span>${destacarUf.label}</span>`);
       if (destacarMunicipio) legendaItens.push(`<span><span class="dot" style="background:${COR.municipio}"></span>${destacarMunicipio.label}</span>`);
       elRelLegend.innerHTML = legendaItens.join("");
@@ -722,13 +859,135 @@
       elRelNota.innerHTML = `${fmt(pontos.length)} ${unidade} com as duas variáveis observadas · correlação de Pearson: <b>${fmtDec(corr, 2)}</b>. ${anoTxt}`;
     }
 
-    elVarX.onchange = () => { atualizarAnoRelacao(); desenharRelacao(); };
-    elVarY.onchange = () => { atualizarAnoRelacao(); desenharRelacao(); };
+    const yPadrao = (curadas.find((d) => d.variavel.includes("risco_inundacao")) ||
+      curadas.find((d) => d.slug !== (curadas.find((d2) => d2.variavel === "ivs_media") || curadas[0]).slug) || curadas[1] || curadas[0]).variavel;
+    montarSeletorDimVar(elDimX, elVarX, "ivs_media", desenharRelacao);
+    montarSeletorDimVar(elDimY, elVarY, yPadrao, desenharRelacao);
+    elRelPond.onchange = desenharRelacao;
     elRelAno.onchange = desenharRelacao;
     elRelUf.onchange = desenharRelacao;
     elRelMuni.addEventListener("change", desenharRelacao);
     elRelMuniLimpar.addEventListener("click", () => { elRelMuni.value = ""; desenharRelacao(); });
     desenharRelacao();
+
+    // ================= RANKING =================
+    const elDimRank = document.getElementById("dim-rank"), elVarRank = document.getElementById("var-rank");
+    const elNivelRank = document.getElementById("nivel-rank"), elAnoRank = document.getElementById("ano-rank"), elAnoRankWrap = document.getElementById("ano-rank-wrap");
+    const elPondRank = document.getElementById("pond-rank"), elPondRankWrap = document.getElementById("pond-rank-wrap");
+    const elOrdemRank = document.getElementById("ordem-rank");
+    const elRankMuniWrap = document.getElementById("rank-municipio-wrap"), elRankEscopo = document.getElementById("rank-escopo");
+    const elRankMuni = document.getElementById("rank-municipio"), elRankMuniLimpar = document.getElementById("rank-municipio-limpar");
+    const elRankChart = document.getElementById("rank_chart"), elRankNota = document.getElementById("rank_nota");
+
+    function renderRankingBars(linhas, idDestacar) {
+      elRankChart.innerHTML = "";
+      if (!linhas.length) { msg(elRankChart, "Sem dados."); return; }
+      const max = d3.max(linhas, (d) => Math.abs(d.valor)) || 1;
+      linhas.forEach((d) => {
+        if (d.separador) {
+          const sep = document.createElement("div");
+          sep.className = "rank-sep"; sep.textContent = "⋮";
+          elRankChart.appendChild(sep);
+        }
+        const destacado = idDestacar && d.id === idDestacar;
+        const bar = document.createElement("div");
+        bar.className = "dim-bar" + (destacado ? " is-active" : "");
+        bar.innerHTML = `
+          <div class="name">${d.pos != null ? d.pos + ". " : ""}${d.nome}</div>
+          <div class="track"><div class="fill" style="width:${(100 * Math.abs(d.valor) / max).toFixed(1)}%${destacado ? ";background:var(--accent-3)" : ""}"></div></div>
+          <div class="val">${fmtDec(d.valor, 2)}</div>`;
+        elRankChart.appendChild(bar);
+      });
+    }
+
+    function atualizarVisibilidadeRank() {
+      const ehMunicipio = elNivelRank.value === "municipio";
+      elAnoRankWrap.style.display = ehMunicipio ? "none" : "";
+      elPondRankWrap.style.display = ehMunicipio ? "none" : "";
+      elRankMuniWrap.hidden = !ehMunicipio;
+    }
+
+    function desenharRankingMunicipio() {
+      const variavel = elVarRank.value, ordem = elOrdemRank.value, escopo = elRankEscopo.value;
+      const curadaRow = curadas.find((d) => d.variavel === variavel);
+      const ref = resolverMunicipio(elRankMuni.value);
+
+      let linhas = snapshot.filter((d) => d.variavel === variavel).map((d) => {
+        const id = String(d.id_municipio);
+        const info = MUNI_INFO.get(id) || {};
+        return { id, nome: `${info.nome || ""} (${info.sigla_uf || ""})`, sigla_uf: info.sigla_uf, code_micro: info.code_micro, valor: +d.valor };
+      });
+      const anoRefRow = snapshot.find((d) => d.variavel === variavel);
+      const anoRefTxt = anoRefRow ? anoRefRow.ano_referencia : "";
+
+      if (escopo !== "brasil") {
+        if (!ref) { msg(elRankChart, "Escolha um município de referência para comparar por " + (escopo === "estado" ? "estado" : "microrregião") + "."); elRankNota.textContent = "—"; return; }
+        const refInfo = MUNI_INFO.get(String(ref.id_municipio)) || {};
+        if (escopo === "estado") linhas = linhas.filter((l) => l.sigla_uf === refInfo.sigla_uf);
+        else linhas = linhas.filter((l) => l.code_micro === refInfo.code_micro);
+      }
+
+      linhas.sort((a, b) => ordem === "desc" ? b.valor - a.valor : a.valor - b.valor);
+      const idRef = ref ? String(ref.id_municipio) : null;
+      const posRef = idRef ? linhas.findIndex((l) => l.id === idRef) : -1;
+
+      let mostrar = linhas.slice(0, 30).map((l, i) => ({ ...l, pos: i + 1 }));
+      if (posRef >= 30) mostrar = mostrar.concat([{ ...linhas[posRef], pos: posRef + 1, separador: true }]);
+
+      renderRankingBars(mostrar, idRef);
+
+      const escopoTxt = { brasil: "no Brasil", estado: "no estado " + (ref ? ref.sigla_uf : ""), micro: "na microrregião" }[escopo];
+      let nota = curadaRow ? `${curadaRow.rotulo}${unidadeTxt(curadaRow.unidade)} · ano de referência: ${anoRefTxt} · ${fmt(linhas.length)} municípios ${escopoTxt}` : "—";
+      if (posRef >= 0) {
+        const percentil = linhas.length > 1 ? Math.round(100 * (1 - posRef / (linhas.length - 1))) : 100;
+        nota += ` · <b>${ref.nome} (${ref.sigla_uf})</b> ocupa a posição ${posRef + 1} de ${linhas.length} (percentil ${percentil}).`;
+      } else nota += ".";
+      elRankNota.innerHTML = nota;
+    }
+
+    function desenharRanking() {
+      const nivel = elNivelRank.value;
+      if (nivel === "municipio") { desenharRankingMunicipio(); return; }
+
+      const variavel = elVarRank.value, pond = elPondRank.value, ordem = elOrdemRank.value;
+      const curadaRow = curadas.find((d) => d.variavel === variavel);
+      msg(elRankChart, "Carregando…");
+
+      serieMunicipio(variavel).then((rows) => {
+        const anos = Array.from(new Set(rows.map((d) => +d.ano))).sort((a, b) => a - b);
+        const atual = toNum(elAnoRank.value);
+        elAnoRank.replaceChildren(...anos.map((a) => new Option(String(a), String(a))));
+        const ano = anos.length ? (atual && anos.includes(atual) ? atual : anos[anos.length - 1]) : null;
+        if (ano != null) elAnoRank.value = String(ano);
+
+        const nomeFn = {
+          estado: (g) => `${g} — ${NOME_UF.get(g) || ""}`,
+          meso: (g) => NOME_MESO.get(g) || g,
+          micro: (g) => NOME_MICRO.get(g) || g
+        }[nivel];
+        let linhas = agregarMuni(rows, GRUPO_FN[nivel], pond).filter((r) => r.ano === ano)
+          .map((r) => ({ nome: nomeFn(r.grupo), valor: r.media }))
+          .sort((a, b) => ordem === "desc" ? b.valor - a.valor : a.valor - b.valor)
+          .map((l, i) => ({ ...l, pos: i + 1 }));
+
+        renderRankingBars(linhas.slice(0, 30), null);
+        const rotuloNivel = { estado: "estados", meso: "mesorregiões", micro: "microrregiões" }[nivel];
+        elRankNota.textContent = curadaRow
+          ? `${curadaRow.rotulo}${unidadeTxt(curadaRow.unidade)} · ano ${ano}${pondTxt(pond)} · ${fmt(linhas.length)} ${rotuloNivel} · mostrando os ${Math.min(30, linhas.length)} primeiros.`
+          : "—";
+      });
+    }
+
+    montarSeletorDimVar(elDimRank, elVarRank, "ivs_media", desenharRanking);
+    elNivelRank.onchange = () => { atualizarVisibilidadeRank(); desenharRanking(); };
+    elAnoRank.onchange = desenharRanking;
+    elPondRank.onchange = desenharRanking;
+    elOrdemRank.onchange = desenharRanking;
+    elRankEscopo.onchange = desenharRanking;
+    elRankMuni.addEventListener("change", desenharRanking);
+    elRankMuniLimpar.addEventListener("click", () => { elRankMuni.value = ""; desenharRanking(); });
+    atualizarVisibilidadeRank();
+    desenharRanking();
 
   }).catch((err) => {
     document.querySelector(".wrap").insertAdjacentHTML("afterbegin",

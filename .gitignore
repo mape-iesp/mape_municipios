@@ -23,8 +23,9 @@ _log_*.txt
 # Saída solta de plotagem sem arquivo de destino explícito
 /Rplots.pdf
 
-# Documento interno — não vai para o GitHub, fica só no Drive
-/Banco de dados Informações Municipais v1.docx
+# Documento interno — não vai para o GitHub, fica só no Drive (cobre
+# também variantes como "... (revisado).docx")
+/Banco de dados Informações Municipais v1*.docx
 
 # Caches, dados brutos e intermediários pesados dentro de cada dimensão —
 # o padrão abaixo cobre as subpastas de origem bruta mais comuns no

@@ -14,7 +14,10 @@
 #   2. Tipologia 2x2 de vulnerabilidade social x risco de enchentes (Figura 3)
 #   3. Mapa temático da tipologia para o Rio de Janeiro (Figura 4)
 #   4. Evolução temporal da Taxa de Mortalidade Ajustada por CSAP (Figura 5)
-#   5. Modelo de regressão em painel para a Taxa de Mortalidade CSAP (Tabela 2)
+#   5. Modelo pooled (MQO empilhado) para a Taxa de Mortalidade CSAP (Tabela 2)
+#      — não é efeitos fixos: ivs_media e adaptabrasil_risco_inundacao_valor
+#      variam pouco dentro de cada município e seriam absorvidas pelo efeito
+#      de município (ver comentário no passo 5).
 # =============================================================================
 
 pacotes <- c("arrow", "dplyr", "ggplot2", "geobr", "sf", "plm", "broom", "here")
@@ -33,13 +36,23 @@ dir.create(dir_saida, showWarnings = FALSE)
 painel <- arrow::read_parquet(here("4 Base Final", "mape_municipios.parquet"))
 
 # ── 1. Relação entre vulnerabilidade social e risco ambiental ───────────────
-# v1.docx, Figura 2: "Relação entre variáveis ivs e
-# indice_risco_inundacoes_enxurradas". No painel atual, a variável de risco
-# equivalente é adaptabrasil_risco_inundacao_valor (AdaptaBrasil/MCTI,
-# dimensão Meio-Ambiente; ver "1 Bases Individuais/12 Meio-Ambiente código.R").
+# v1.docx, Figura 2: "Relação entre as variáveis ivs_media e
+# adaptabrasil_risco_inundacao_valor" (AdaptaBrasil/MCTI, dimensão
+# Meio-Ambiente; ver "1 Bases Individuais/12 Meio-Ambiente código.R").
+#
+# Corte transversal: 1 linha por município (ano mais recente com as duas
+# variáveis observadas), não o município-ano empilhado. ivs_media muda só a
+# cada novo Censo e é repetido nos anos entre censos; se não deduplicarmos
+# por município, cada um entra 1-2x (uma por "regime" de valor de IVS) e o
+# join com o mapa do RJ (passo 3) duplica geometrias e produz um mapa errado
+# (testado e confirmado: sem este corte, ~5.562 dos 5.564 municípios tinham
+# mais de uma linha em "risco_social_ambiental").
 risco_social_ambiental <- painel %>%
   filter(!is.na(ivs_media), !is.na(adaptabrasil_risco_inundacao_valor)) %>%
-  distinct(id_municipio, ivs_media, adaptabrasil_risco_inundacao_valor)
+  group_by(id_municipio) %>%
+  filter(ano == max(ano)) %>%
+  ungroup() %>%
+  distinct(id_municipio, .keep_all = TRUE)
 
 cat("Figura 2 — municípios com IVS e risco de inundação observados:",
     nrow(risco_social_ambiental), "\n")
@@ -66,16 +79,25 @@ mediana_risco  <- median(risco_social_ambiental$adaptabrasil_risco_inundacao_val
 tipologia <- risco_social_ambiental %>%
   mutate(
     tipo = case_when(
-      ivs_media >= mediana_ivs  & adaptabrasil_risco_inundacao_valor >= mediana_risco ~ "Alta vulnerabilidade social + alto risco",
-      ivs_media >= mediana_ivs  & adaptabrasil_risco_inundacao_valor <  mediana_risco ~ "Alta vulnerabilidade social + baixo risco",
-      ivs_media <  mediana_ivs  & adaptabrasil_risco_inundacao_valor >= mediana_risco ~ "Baixa vulnerabilidade social + alto risco",
-      TRUE                                                                            ~ "Baixa vulnerabilidade social + baixo risco"
+      ivs_media >= mediana_ivs  & adaptabrasil_risco_inundacao_valor >= mediana_risco ~ "Risco Alto, Vuln. Alta",
+      ivs_media >= mediana_ivs  & adaptabrasil_risco_inundacao_valor <  mediana_risco ~ "Risco Baixo, Vuln. Alta",
+      ivs_media <  mediana_ivs  & adaptabrasil_risco_inundacao_valor >= mediana_risco ~ "Risco Alto, Vuln. Baixa",
+      TRUE                                                                            ~ "Risco Baixo, Vuln. Baixa"
     )
   )
 
 cat("\nFigura 3 — municípios por tipo:\n")
 print(table(tipologia$tipo))
 write.csv(tipologia, file.path(dir_saida, "figura_3_tipologia_riscos.csv"), row.names = FALSE)
+
+g2 <- ggplot(tipologia, aes(x = adaptabrasil_risco_inundacao_valor, y = ivs_media, color = tipo)) +
+  geom_point(alpha = 0.5) +
+  geom_vline(xintercept = mediana_risco, linetype = "dashed", color = "grey40") +
+  geom_hline(yintercept = mediana_ivs, linetype = "dashed", color = "grey40") +
+  labs(x = "Índice de risco de inundações", y = "Índice de vulnerabilidade social", color = NULL,
+       title = "Tipologia de risco social x ambiental") +
+  theme_minimal()
+ggsave(file.path(dir_saida, "figura_3_tipologia_scatter.png"), g2, width = 7, height = 5)
 
 # ── 3. Mapa temático da tipologia (Rio de Janeiro) ───────────────────────────
 # v1.docx, Figura 4: mesma tipologia aplicada ao mapa do RJ, via geobr.

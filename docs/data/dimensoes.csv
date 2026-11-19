@@ -1,18 +1,18 @@
-"dimensao_slug","n_variaveis","dimensao"
-"eleicao_partidos",626,"Eleições e Partidos"
-"educacao",420,"Educação"
-"transportes_mobilidade",279,"Mobilidade e Transportes"
-"economia",263,"População"
-"financas",223,"Finanças"
-"sociedade_participacao",194,"Sociedade e Participação"
-"habitacao_zoneamento",135,"Habitação e Zoneamento"
-"rh",96,"População"
-"meio_ambiente",92,"Meio ambiente"
-"saude",76,"Saúde"
-"seguranca",50,"Segurança"
-"assistencia_dh",44,"Assistência Social e Direitos Humanos"
-"historia",37,"Dados Históricos"
-"identificacao",30,"Identificação"
-"energia_internet",11,"Energia e Internet"
-"populacao",9,"Identificação"
-"corrupcao_transparencia",8,"Corrupção e Transparência"
+dimensao_slug,n_variaveis,dimensao
+eleicao_partidos,628,Eleições e Partidos
+educacao,421,Educação
+transportes_mobilidade,280,Mobilidade e Transportes
+economia,263,Economia
+financas,224,Finanças
+sociedade_participacao,195,Sociedade e Participação
+habitacao_zoneamento,136,Habitação e Zoneamento
+rh,97,Recursos Humanos
+meio_ambiente,92,Meio ambiente
+saude,76,Saúde
+seguranca,51,Segurança
+assistencia_dh,44,Assistência Social e Direitos Humanos
+historia,38,Dados Históricos
+energia_internet,34,Energia e Internet
+identificacao,30,Identificação
+populacao,10,População
+corrupcao_transparencia,8,Corrupção e Transparência

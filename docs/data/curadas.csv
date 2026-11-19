@@ -215,9 +215,6 @@ transportes_mobilidade,frota_motoneta,,frota_motoneta,Frota de motonetas do muni
 transportes_mobilidade,frota_onibus,,frota_onibus,Frota de ônibus do município no ano (posição em dezembro).
 transportes_mobilidade,frota_outros,,frota_outros,Frota de outros tipos do município no ano (posição em…
 transportes_mobilidade,frota_quadriciclo,,frota_quadriciclo,Frota de quadriciclos do município no ano (posição em…
-assistencia_dh,total_violacoes_grupo_nao_informado,,total_violacoes_grupo_nao_informado,Denúncias sem grupo vulnerável informado pelo denunciante (diferente d…
-assistencia_dh,total_violacoes_pessoa_vulneravel,,total_violacoes_pessoa_vulneravel,"Denúncias do grupo vulnerável ""Pessoa Socialmente Vulnerável"""
-assistencia_dh,total_violacoes_direitos_humanos,,total_violacoes_direitos_humanos,"Denúncias classificadas genericamente como ""Violação de Direitos Human…"
 assistencia_dh,bpc_deficientes_valor_dezembro_r_defl2023,R$ dez/2023,bpc_deficientes_valor_dezembro_r,Valor total dos benefícios do BPC para pessoas com deficiência em deze…
 assistencia_dh,bpc_idosos_beneficios_dezembro_i,,bpc_idosos_beneficios_dezembro_i,Número de benefícios do BPC para idosos em dezembro (código IPEADATA B…
 assistencia_dh,bpc_idosos_valor_dezembro_r_defl2023,R$ dez/2023,bpc_idosos_valor_dezembro_r,"Valor total dos benefícios do BPC para idosos em dezembro, R$ nominais…"
@@ -230,34 +227,16 @@ assistencia_dh,cadun_qtd_familias_atualizadas_pobreza_pbf_i,,cadun_qtd_familias_
 assistencia_dh,cadun_qtd_familias_atualizadas_baixa_renda_i,,cadun_qtd_familias_atualizadas_baixa_renda_i,Famílias com cadastro atualizado na faixa de baixa renda
 assistencia_dh,cadun_qtd_familias_atualizadas_rfpc_acima_meio_sm_i,,cadun_qtd_familias_atualizadas_rfpc_acima_meio_sm_i,Famílias com cadastro atualizado e renda per capita acima de meio salá…
 assistencia_dh,suas_pessoas_cadunico,,suas_pessoas_cadunico,Pessoas inscritas no Cadastro Único no município (Censo SUAS)
-economia,total_area_borracha_latex_liquido,,total_area_borracha_latex_liquido,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
-economia,total_area_caju,,total_area_caju,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_castanha_de_caju,,total_area_castanha_de_caju,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
-economia,total_area_cha_da_india_folha_verde,,total_area_cha_da_india_folha_verde,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_coco_da_baia,,total_area_coco_da_baia,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
-economia,total_area_dende_cacho_de_coco,,total_area_dende_cacho_de_coco,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_erva_mate_folha_verde,,total_area_erva_mate_folha_verde,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_figo,,total_area_figo,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_goiaba,,total_area_goiaba,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
-economia,total_area_guarana_semente,,total_area_guarana_semente,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_laranja,,total_area_laranja,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_limao,,total_area_limao,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
-economia,total_area_maca,,total_area_maca,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_mamao,,total_area_mamao,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
 economia,total_area_manga,,total_area_manga,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
-educacao,total_matriculas_educacao_infantil_creche_branca_feminino,,total_matriculas_educacao_infantil_creche_branca_feminino,"Matrículas em Educação Infantil – Creche, raça/cor branca, sexo femini…"
-educacao,total_matriculas_educacao_infantil_creche_preta_feminino,,total_matriculas_educacao_infantil_creche_preta_feminino,"Matrículas em Educação Infantil – Creche, raça/cor preta, sexo feminin…"
-educacao,total_matriculas_educacao_infantil_creche_parda_feminino,,total_matriculas_educacao_infantil_creche_parda_feminino,"Matrículas em Educação Infantil – Creche, raça/cor parda, sexo feminin…"
-educacao,total_matriculas_educacao_infantil_creche_amarela_feminino,,total_matriculas_educacao_infantil_creche_amarela_feminino,"Matrículas em Educação Infantil – Creche, raça/cor amarela, sexo femin…"
-educacao,total_matriculas_educacao_infantil_creche_indigena_feminino,,total_matriculas_educacao_infantil_creche_indigena_feminino,"Matrículas em Educação Infantil – Creche, raça/cor indígena, sexo femi…"
-educacao,total_matriculas_educacao_infantil_creche_nao_declarada_feminino,,total_matriculas_educacao_infantil_creche_nao_declarada_feminino,"Matrículas em Educação Infantil – Creche, raça/cor cor/raça não declar…"
-educacao,total_matriculas_educacao_infantil_pre_escola_branca_feminino,,total_matriculas_educacao_infantil_pre_escola_branca_feminino,"Matrículas em Educação Infantil – Pré-Escola, raça/cor branca, sexo fe…"
-educacao,total_matriculas_educacao_infantil_pre_escola_preta_feminino,,total_matriculas_educacao_infantil_pre_escola_preta_feminino,"Matrículas em Educação Infantil – Pré-Escola, raça/cor preta, sexo fem…"
-educacao,total_matriculas_educacao_infantil_pre_escola_parda_feminino,,total_matriculas_educacao_infantil_pre_escola_parda_feminino,"Matrículas em Educação Infantil – Pré-Escola, raça/cor parda, sexo fem…"
-educacao,total_matriculas_educacao_infantil_pre_escola_amarela_feminino,,total_matriculas_educacao_infantil_pre_escola_amarela_feminino,"Matrículas em Educação Infantil – Pré-Escola, raça/cor amarela, sexo f…"
-educacao,total_matriculas_educacao_infantil_pre_escola_indigena_feminino,,total_matriculas_educacao_infantil_pre_escola_indigena_feminino,"Matrículas em Educação Infantil – Pré-Escola, raça/cor indígena, sexo …"
 educacao,total_matriculas_educacao_infantil_pre_escola_nao_declarada,,total_matriculas_educacao_infantil_pre_escola_nao_declarada,"Matrículas em Educação Infantil – Pré-Escola, raça/cor cor/raça não de…"
-educacao,total_matriculas_educacao_infantil_pre_escola_nao_declarada_feminino,,total_matriculas_educacao_infantil_pre_escola_nao_declarada_feminino,"Matrículas em Educação Infantil – Pré-Escola, raça/cor cor/raça não de…"
 educacao,total_matriculas_fundamental_anos_iniciais,,total_matriculas_fundamental_anos_iniciais,Matrículas em Ensino Fundamental – Anos Iniciais
 educacao,total_matriculas_fundamental_anos_iniciais_branca,,total_matriculas_fundamental_anos_iniciais_branca,"Matrículas em Ensino Fundamental – Anos Iniciais, raça/cor branca"
 eleicao_partidos,proporcao_votos_nulos_vereador_1_turno,,proporcao_votos_nulos_vereador_1_turno,"Votos nulos, em % (escala 0–100) — Vereador, 1º turno"
@@ -288,10 +267,7 @@ financas,despesas_empenhadas_industria_defl2023,R$ dez/2023,despesas_empenhadas_
 financas,despesas_empenhadas_comunicacoes_defl2023,R$ dez/2023,despesas_empenhadas_comunicacoes,Despesa empenhada do município na função 'Comunicações'
 financas,despesas_empenhadas_essencial_a_justica_defl2023,R$ dez/2023,despesas_empenhadas_essencial_a_justica,Despesa empenhada do município na função 'Essencial à Justiça'
 financas,despesas_empenhadas_direitos_da_cidadania_defl2023,R$ dez/2023,despesas_empenhadas_direitos_da_cidadania,Despesa empenhada do município na função 'Direitos da Cidadania'
-financas,despesas_empenhadas_relacoes_exteriores_defl2023,R$ dez/2023,despesas_empenhadas_relacoes_exteriores,Despesa empenhada do município na função 'Relações Exteriores'
-financas,despesas_empenhadas_ciencia_e_tecnologia_defl2023,R$ dez/2023,despesas_empenhadas_ciencia_e_tecnologia,Despesa empenhada do município na função 'Ciência e Tecnologia'
 habitacao_zoneamento,orgao_gestor_observado,0/1,orgao_gestor_observado,TRUE se o município respondeu à pergunta sobre o órgão gestor do plane…
-habitacao_zoneamento,mcmv_sub_qtd_uh_distratadas,,mcmv_sub_qtd_uh_distratadas,"Quantidade de unidades habitacionais distratadas/canceladas, dos empre…"
 habitacao_zoneamento,mcmv_sub_val_contratado_defl2023,R$ dez/2023,mcmv_sub_val_contratado,"Valor total contratado nos empreendimentos do MCMV Subsidiado no ano, …"
 habitacao_zoneamento,mcmv_sub_val_desembolsado_defl2023,R$ dez/2023,mcmv_sub_val_desembolsado,Valor desembolsado para os empreendimentos do MCMV Subsidiado contrata…
 habitacao_zoneamento,mcmv_fin_qtd_uh_financiadas,,mcmv_fin_qtd_uh_financiadas,Quantidade de unidades habitacionais financiadas com recursos do FGTS …
@@ -302,31 +278,18 @@ habitacao_zoneamento,plano_municipal_habitacao_existencia_persistido,0/1,plano_m
 habitacao_zoneamento,loteamentos_irregulares_existencia_persistido,0/1,loteamentos_irregulares_existencia_persistido,Versão de loteamentos_irregulares_existencia_obs com o último valor ob…
 habitacao_zoneamento,programas_aquisicao_unidades_habitacionais_persistido,0/1,programas_aquisicao_unidades_habitacionais_persistido,Versão de programas_aquisicao_unidades_habitacionais_obs com o último …
 habitacao_zoneamento,emitiu_nada_persistido,0/1,emitiu_nada_persistido,Versão de emitiu_nada_obs com o último valor observado mantido (LOCF) …
-habitacao_zoneamento,orgao_administracao_indireta_habitacao_existencia_persistido,0/1,orgao_administracao_indireta_habitacao_existencia_persistido,Versão de orgao_administracao_indireta_habitacao_existencia_obs com o …
 habitacao_zoneamento,programas_construcao_unidades_habitacionais_convenio_persistido,0/1,programas_construcao_unidades_habitacionais_convenio_persistido,Versão de programas_construcao_unidades_habitacionais_convenio_obs com…
 habitacao_zoneamento,demais_instrumentos_regularizacao_fundiaria_existencia_vigente,0/1,demais_instrumentos_regularizacao_fundiaria_existencia_vigente,"1 se o município tinha, no ano, instrumento/estrutura vigente referent…"
 historia,decada_primeiro_censo,,decada_primeiro_censo,Década do primeiro Censo de aparição
-historia,flag_incerteza_ibge,0/1,flag_incerteza_ibge,Indica se alguma célula da trajetória do município tem asterisco (ince…
-historia,flag_litigio,0/1,flag_litigio,Indica se o território esteve em litígio/contestado em algum censo (ex…
-historia,flag_conflito_dup,0/1,flag_conflito_dup,Indica conflito entre linhas duplicadas do mesmo id na planilha IBGE
-historia,flag_reinstalado,0/1,flag_reinstalado,"Indica município que existiu, foi extinto/anexado e depois recriado"
-historia,flag_sede_outra,0/1,flag_sede_outra,Indica município que antes de aparecer com nome próprio constava como …
-historia,fonte_fundacao,,fonte_fundacao,Fonte da informação de fundação (IBGE 2011 ou preenchimento manual)
 historia,anos_desde_primeiro_censo_2010,,anos_desde_primeiro_censo_2010,Anos decorridos entre o primeiro Censo de aparição e 2010
-historia,flag_diverge_original,0/1,flag_diverge_original,Indica divergência entre ano_primeiro_censo e a estimativa original da…
-historia,existe_2010,0/1,existe_2010,Indica se o município existe no Censo 2010
 identificacao,longitude.sd,,longitude.sd,"Longitude padronizada (média zero, desvio padrão igual a um)"
 identificacao,latitude.sd,,latitude.sd,"Latitude padronizada (média zero, desvio padrão igual a um)"
 meio_ambiente,total_prejuizos_publicos_defl2023,R$ dez/2023,total_prejuizos_publicos,"Total de prejuízos econômicos públicos (PEPL_total_publico, R$ corrent…"
 meio_ambiente,total_prejuizos_publicos_climatologicos_defl2023,R$ dez/2023,total_prejuizos_publicos_climatologicos,"Total de prejuízos econômicos públicos (PEPL_total_publico, R$ corrent…"
 meio_ambiente,total_prejuizos_publicos_hidrologicos_defl2023,R$ dez/2023,total_prejuizos_publicos_hidrologicos,"Total de prejuízos econômicos públicos (PEPL_total_publico, R$ corrent…"
-meio_ambiente,total_prejuizos_publicos_meteorologicos_defl2023,R$ dez/2023,total_prejuizos_publicos_meteorologicos,"Total de prejuízos econômicos públicos (PEPL_total_publico, R$ corrent…"
-meio_ambiente,total_prejuizos_publicos_outros_defl2023,R$ dez/2023,total_prejuizos_publicos_outros,"Total de prejuízos econômicos públicos (PEPL_total_publico, R$ corrent…"
 meio_ambiente,total_prejuizos_privados_defl2023,R$ dez/2023,total_prejuizos_privados,"Total de prejuízos econômicos privados (PEPR_total_privado, R$ corrent…"
 meio_ambiente,total_prejuizos_privados_climatologicos_defl2023,R$ dez/2023,total_prejuizos_privados_climatologicos,"Total de prejuízos econômicos privados (PEPR_total_privado, R$ corrent…"
 meio_ambiente,total_prejuizos_privados_hidrologicos_defl2023,R$ dez/2023,total_prejuizos_privados_hidrologicos,"Total de prejuízos econômicos privados (PEPR_total_privado, R$ corrent…"
-meio_ambiente,total_prejuizos_privados_meteorologicos_defl2023,R$ dez/2023,total_prejuizos_privados_meteorologicos,"Total de prejuízos econômicos privados (PEPR_total_privado, R$ corrent…"
-meio_ambiente,total_prejuizos_privados_outros_defl2023,R$ dez/2023,total_prejuizos_privados_outros,"Total de prejuízos econômicos privados (PEPR_total_privado, R$ corrent…"
 meio_ambiente,area_total_municipio,,area_total_municipio,"Área total do município monitorada pelo PRODES, somada entre todos os …"
 meio_ambiente,area_total_amazonia,,area_total_amazonia,"Área total do município monitorada pelo PRODES, só no bioma Amazônia (…"
 meio_ambiente,area_vegetacao_natural,,area_vegetacao_natural,"Área de vegetação natural remanescente no município, todos os biomas (…"
@@ -366,44 +329,73 @@ seguranca,ob_homicidio_masculino,,ob_homicidio_masculino,"Total de óbitos por h
 seguranca,ob_homicidio_branca,,ob_homicidio_branca,"Total de óbitos por homicídio, raça/cor branca"
 seguranca,ob_homicidio_preta,,ob_homicidio_preta,"Total de óbitos por homicídio, raça/cor preta"
 seguranca,ob_homicidio_parda,,ob_homicidio_parda,"Total de óbitos por homicídio, raça/cor parda"
-seguranca,ob_homicidio_amarela,,ob_homicidio_amarela,"Total de óbitos por homicídio, raça/cor amarela"
-seguranca,ob_homicidio_indigena,,ob_homicidio_indigena,"Total de óbitos por homicídio, indígena"
-seguranca,ob_homicidio_preta_feminino,,ob_homicidio_preta_feminino,"Total de óbitos por homicídio, mulheres de raça/cor preta"
 seguranca,ob_homicidio_parda_feminino,,ob_homicidio_parda_feminino,"Total de óbitos por homicídio, mulheres de raça/cor parda"
 seguranca,ob_homicidio_branca_feminino,,ob_homicidio_branca_feminino,"Total de óbitos por homicídio, mulheres de raça/cor branca"
-seguranca,ob_homicidio_amarela_feminino,,ob_homicidio_amarela_feminino,"Total de óbitos por homicídio, mulheres de raça/cor amarela"
-seguranca,ob_homicidio_indigena_feminino,,ob_homicidio_indigena_feminino,"Total de óbitos por homicídio, mulheres indígenas"
 seguranca,ob_homicidio_feminino_domicilio,,ob_homicidio_feminino_domicilio,Total de óbitos por homicídio de mulheres ocorridos em domicílio (LOCO…
 seguranca,ob_homicidio_branca_feminino_domicilio,,ob_homicidio_branca_feminino_domicilio,Total de óbitos por homicídio de mulheres de raça/cor branca ocorridos…
-seguranca,ob_homicidio_preta_feminino_domicilio,,ob_homicidio_preta_feminino_domicilio,Total de óbitos por homicídio de mulheres de raça/cor preta ocorridos …
 seguranca,ob_homicidio_parda_feminino_domicilio,,ob_homicidio_parda_feminino_domicilio,Total de óbitos por homicídio de mulheres de raça/cor parda ocorridos …
 sociedade_participacao,total_conselhos,,total_conselhos,Número de conselhos municipais (dos 25 pesquisados pela MUNIC) com exi…
 sociedade_participacao,cons_meio_ambiente_existe,0/1,cons_meio_ambiente_existe,"Conselho Municipal de Meio Ambiente – existência (1 = sim, 0 = não)"
 sociedade_participacao,cons_meio_ambiente_corrigido,0/1,cons_meio_ambiente_corrigido,Conselho Municipal de Meio Ambiente – existência corrigida pelo ano de…
 sociedade_participacao,cons_habitacao_existe,0/1,cons_habitacao_existe,"Conselho Municipal de Habitação – existência (1 = sim, 0 = não)"
-sociedade_participacao,cons_habitacao_corrigido,0/1,cons_habitacao_corrigido,Conselho Municipal de Habitação – existência corrigida pelo ano de cri…
 sociedade_participacao,cons_cultura_existe,0/1,cons_cultura_existe,"Conselho Municipal de Cultura – existência (1 = sim, 0 = não)"
 sociedade_participacao,cons_cultura_corrigido,0/1,cons_cultura_corrigido,Conselho Municipal de Cultura – existência corrigida pelo ano de criaç…
 sociedade_participacao,cons_pol_urbana_existe,0/1,cons_pol_urbana_existe,"Conselho municipal de política urbana, desenvolvimento urbano, da cida…"
-sociedade_participacao,cons_pol_urbana_corrigido,0/1,cons_pol_urbana_corrigido,"Conselho municipal de política urbana, desenvolvimento urbano, da cida…"
-sociedade_participacao,cons_crianca_adolesc_existe,0/1,cons_crianca_adolesc_existe,Conselho Municipal de Direitos da Criança e do Adolescente – existênci…
-sociedade_participacao,cons_crianca_adolesc_corrigido,0/1,cons_crianca_adolesc_corrigido,Conselho Municipal de Direitos da Criança e do Adolescente – existênci…
 sociedade_participacao,cons_educacao_existe,0/1,cons_educacao_existe,"Conselho de Educação – existência (1 = sim, 0 = não)"
-sociedade_participacao,cons_educacao_corrigido,0/1,cons_educacao_corrigido,Conselho de Educação – existência corrigida pelo ano de criação (1 = s…
 sociedade_participacao,cons_seg_publica_existe,0/1,cons_seg_publica_existe,"Conselho municipal de segurança pública – existência (1 = sim, 0 = não…"
-sociedade_participacao,cons_seg_publica_corrigido,0/1,cons_seg_publica_corrigido,Conselho municipal de segurança pública – existência corrigida pelo an…
-transportes_mobilidade,tarifa_zero_universal,0/1,tarifa_zero_universal,"1 se o município tinha, no ano, política de tarifa zero (passe livre u…"
 transportes_mobilidade,frota_reboque,,frota_reboque,Frota de reboques do município no ano (posição em dezembro).
 transportes_mobilidade,frota_semi_reboque,,frota_semi_reboque,Frota de semirreboques do município no ano (posição em dezembro).
 transportes_mobilidade,frota_side_car,,frota_side_car,Frota de side-cars do município no ano (posição em dezembro).
-transportes_mobilidade,frota_trator_esteira,,frota_trator_esteira,Frota de tratores de esteira do município no ano (posição em dezembro)…
 transportes_mobilidade,frota_trator_rodas,,frota_trator_rodas,Frota de tratores de rodas do município no ano (posição em dezembro).
 transportes_mobilidade,frota_triciclo,,frota_triciclo,Frota de triciclos do município no ano (posição em dezembro).
 transportes_mobilidade,frota_utilitario,,frota_utilitario,Frota de utilitários do município no ano (posição em dezembro).
-transportes_mobilidade,frota_nao_especificado,,frota_nao_especificado,Frota de tipo não especificado na fonte do município no ano (posição e…
 transportes_mobilidade,prop_mortes_transito_negras_total,,prop_mortes_transito_negras_total,Percentual de pessoas negras (pretas e pardas) entre as mortes em acid…
 transportes_mobilidade,prop_mortes_transito_negras_pedestres,,prop_mortes_transito_negras_pedestres,Percentual de pessoas negras (pretas e pardas) entre os pedestres mort…
 transportes_mobilidade,prop_mortes_transito_negras_ciclistas,,prop_mortes_transito_negras_ciclistas,Percentual de pessoas negras (pretas e pardas) entre os ciclistas mort…
 transportes_mobilidade,prop_mortes_transito_negras_motociclistas,,prop_mortes_transito_negras_motociclistas,Percentual de pessoas negras (pretas e pardas) entre os motociclistas …
 transportes_mobilidade,prop_mortes_transito_negras_ocupantes_automovel,,prop_mortes_transito_negras_ocupantes_automovel,Percentual de pessoas negras (pretas e pardas) entre os ocupantes de a…
 transportes_mobilidade,prop_mortes_transito_negras_outros,,prop_mortes_transito_negras_outros,Percentual de pessoas negras (pretas e pardas) entre as demais vítimas…
+assistencia_dh,suas_pessoas_pbf,,suas_pessoas_pbf,Pessoas beneficiárias do Programa Bolsa Família no município (Censo SU…
+assistencia_dh,suas_pessoas_bpc,,suas_pessoas_bpc,Pessoas beneficiárias do Benefício de Prestação Continuada (BPC) no mu…
+assistencia_dh,suas_pessoas_familia_ate_meio_salario,,suas_pessoas_familia_ate_meio_salario,Pessoas em família com renda per capita de até meio salário mínimo (Ce…
+economia,total_area_maracuja,,total_area_maracuja,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
+economia,total_area_pera,,total_area_pera,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
+economia,total_area_pessego,,total_area_pessego,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
+economia,total_area_tangerina,,total_area_tangerina,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
+economia,total_area_uva,,total_area_uva,"Área destinada à colheita (área colhida, no caso de lavoura temporária…"
+economia,total_valor_abacate_defl2023,R$ dez/2023,total_valor_abacate,Valor da produção do produto 'Abacate' (lavoura permanente) no municíp…
+educacao,total_matriculas_fundamental_anos_iniciais_preta,,total_matriculas_fundamental_anos_iniciais_preta,"Matrículas em Ensino Fundamental – Anos Iniciais, raça/cor preta"
+educacao,total_matriculas_fundamental_anos_iniciais_parda,,total_matriculas_fundamental_anos_iniciais_parda,"Matrículas em Ensino Fundamental – Anos Iniciais, raça/cor parda"
+educacao,total_matriculas_fundamental_anos_iniciais_amarela,,total_matriculas_fundamental_anos_iniciais_amarela,"Matrículas em Ensino Fundamental – Anos Iniciais, raça/cor amarela"
+educacao,total_matriculas_fundamental_anos_iniciais_indigena,,total_matriculas_fundamental_anos_iniciais_indigena,"Matrículas em Ensino Fundamental – Anos Iniciais, raça/cor indígena"
+educacao,total_matriculas_fundamental_anos_iniciais_nao_declarada,,total_matriculas_fundamental_anos_iniciais_nao_declarada,"Matrículas em Ensino Fundamental – Anos Iniciais, raça/cor cor/raça nã…"
+educacao,total_matriculas_fundamental_anos_finais,,total_matriculas_fundamental_anos_finais,Matrículas em Ensino Fundamental – Anos Finais
+educacao,total_matriculas_fundamental_anos_finais_branca,,total_matriculas_fundamental_anos_finais_branca,"Matrículas em Ensino Fundamental – Anos Finais, raça/cor branca"
+educacao,total_matriculas_fundamental_anos_finais_preta,,total_matriculas_fundamental_anos_finais_preta,"Matrículas em Ensino Fundamental – Anos Finais, raça/cor preta"
+educacao,total_matriculas_fundamental_anos_finais_parda,,total_matriculas_fundamental_anos_finais_parda,"Matrículas em Ensino Fundamental – Anos Finais, raça/cor parda"
+educacao,total_matriculas_fundamental_anos_finais_amarela,,total_matriculas_fundamental_anos_finais_amarela,"Matrículas em Ensino Fundamental – Anos Finais, raça/cor amarela"
+educacao,total_matriculas_fundamental_anos_finais_indigena,,total_matriculas_fundamental_anos_finais_indigena,"Matrículas em Ensino Fundamental – Anos Finais, raça/cor indígena"
+educacao,total_matriculas_fundamental_anos_finais_nao_declarada,,total_matriculas_fundamental_anos_finais_nao_declarada,"Matrículas em Ensino Fundamental – Anos Finais, raça/cor cor/raça não …"
+financas,despesas_empenhadas_total_defl2023,R$ dez/2023,despesas_empenhadas_total,"Despesa empenhada total do município, exceto intraorçamentárias"
+financas,despesas_liquidadas_administracao_defl2023,R$ dez/2023,despesas_liquidadas_administracao,Despesa liquidada do município na função 'Administração'
+habitacao_zoneamento,demais_instrumentos_lei_iptu_progressivo_existencia_vigente,0/1,demais_instrumentos_lei_iptu_progressivo_existencia_vigente,"1 se o município tinha, no ano, instrumento/estrutura vigente referent…"
+habitacao_zoneamento,demais_instrumentos_zona_area_interesse_social_existencia_vigente,0/1,demais_instrumentos_zona_area_interesse_social_existencia_vigente,"1 se o município tinha, no ano, instrumento/estrutura vigente referent…"
+meio_ambiente,desmatado_total_amazonia,,desmatado_total_amazonia,"Área acumulada desmatada no município até o ano, só no bioma Amazônia …"
+meio_ambiente,proporcao_desmatamento,,proporcao_desmatamento,Proporção da área total do município já desmatada (desmatado_total_mun…
+meio_ambiente,razao_desmatamento_natural,,razao_desmatamento_natural,Razão entre a área desmatada e a área de vegetação natural remanescent…
+meio_ambiente,lag_total_desmatamento,,lag_total_desmatamento,Área acumulada desmatada do município no ano anterior (defasagem de de…
+seguranca,mseg_conselho_municipal_status,,mseg_conselho_municipal_status,"Situação atual do Conselho Municipal de Segurança (Ativo, Inativo, Foi…"
+seguranca,existe_guarda_municipal,0/1,existe_guarda_municipal,Indicador de existência de Guarda Municipal no ano-município: 1 a part…
+seguranca,feminicidio_total,,feminicidio_total,Total de ocorrências de feminicídio registradas no município
+seguranca,homicidio_doloso_total,,homicidio_doloso_total,Total de ocorrências de homicídio doloso registradas no município
+seguranca,lesao_corporal_seguida_de_morte_total,,lesao_corporal_seguida_de_morte_total,Total de ocorrências de lesão corporal seguida de morte
+seguranca,mandado_de_prisao_cumprido_total,,mandado_de_prisao_cumprido_total,Total de mandados de prisão cumpridos
+sociedade_participacao,cons_defesa_civil_existe,0/1,cons_defesa_civil_existe,"Conselho de defesa civil – existência (1 = sim, 0 = não)"
+sociedade_participacao,cons_defesa_civil_corrigido,0/1,cons_defesa_civil_corrigido,Conselho de defesa civil – existência corrigida pelo ano de criação (1…
+sociedade_participacao,cons_transporte_existe,0/1,cons_transporte_existe,"Conselho Municipal de Transporte – existência (1 = sim, 0 = não)"
+sociedade_participacao,cons_educacao_deliberativo,0/1,cons_educacao_deliberativo,"Conselho de Educação – caráter deliberativo (1 = sim, 0 = não)"
+sociedade_participacao,cons_mulher_existe,0/1,cons_mulher_existe,"Conselho municipal de direitos da mulher – existência (1 = sim, 0 = nã…"
+sociedade_participacao,cons_idoso_existe,0/1,cons_idoso_existe,"Conselho Municipal de Direitos da Pessoa Idosa – existência (1 = sim, …"
+transportes_mobilidade,taxa_motorizacao,,taxa_motorizacao,Taxa de motorização (veículos por mil habitantes)
+transportes_mobilidade,tarifa_transporte_publico_defl2023,R$ dez/2023,tarifa_transporte_publico,"Tarifa do transporte público por ônibus na capital (R$ correntes, valo…"
+transportes_mobilidade,comprometimento_renda_tarifa_salario_minimo,,comprometimento_renda_tarifa_salario_minimo,Comprometimento da renda de quem ganha um salário mínimo com a tarifa …

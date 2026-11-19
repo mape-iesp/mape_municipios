@@ -834,7 +834,25 @@ despesas_painel <- despesas_painel %>%
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 7. INTEGRAÇÃO FINAL — emendas + receitas + FIRJAN + Tesouro + despesas
+# 6.5. CONVÊNIOS DA UNIÃO — Portal da Transparência (CGU)
+# ══════════════════════════════════════════════════════════════════════════
+# Pipeline próprio (convenios_uniao/convenios_uniao.R), com seu próprio
+# billing project de coleta — por isso não é refeito aqui, só carregado do
+# .RData já exportado. Integrado à dimensão em 19/11/2026 (antes só tinha o
+# pipeline isolado, sem entrar em financas_brasileiras.xlsx — ver
+# mape_municipios METADADOS.xlsx, aba "Geral"). Escopo 1997-2025, mais amplo
+# que as demais fontes desta dimensão (que começam em 2013): os anos
+# 1997-2012 entram no painel só com as colunas de convênios preenchidas, as
+# demais ficam NA (fora do escopo de cada fonte, mesmo padrão já usado para
+# FIRJAN/Tesouro/Emendas acima).
+load(file.path(PASTA_FINANCAS, "convenios_uniao", "convenios_uniao.RData"))
+convenios_uniao_final <- convenios_uniao_final %>%
+  mutate(id_municipio = as.character(id_municipio), ano = as.integer(ano))
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# 7. INTEGRAÇÃO FINAL — emendas + convênios + receitas + FIRJAN + Tesouro +
+#    despesas
 # ══════════════════════════════════════════════════════════════════════════
 # [UNICO] `emendas_parlamentares` (Etapa 2) entra aqui por id_municipio x ano,
 # como o próprio script de Emendas já previa em suas "Próximas etapas".
@@ -845,7 +863,8 @@ emendas_para_juntar <- emendas_parlamentares %>%
 financas_brasileiras <- full_join(receitas_painel, firjan, by = c("ano", "id_municipio")) %>%
   left_join(tesouro, by = c("ano", "id_municipio")) %>%
   full_join(despesas_painel, by = c("ano", "id_municipio")) %>%
-  full_join(emendas_para_juntar, by = c("ano", "id_municipio"))
+  full_join(emendas_para_juntar, by = c("ano", "id_municipio")) %>%
+  full_join(convenios_uniao_final, by = c("ano", "id_municipio"))
 
 # Checagem de granularidade: cada id_municipio-ano deve ser único no painel final
 n_dup_final <- financas_brasileiras %>% count(id_municipio, ano) %>% filter(n > 1) %>% nrow()
